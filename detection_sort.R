@@ -1,15 +1,15 @@
-setwd('p:/obrien/biotelemetry/detections')
 library(lubridate); library(dplyr); library(reshape2)
 
 
 files <- list.files(path = 'p:/obrien/biotelemetry/detections')
+files <- paste0('p:/obrien/biotelemetry/detections/', files)
 folders <- files[file.info(files)$isdir]
 
 file.locs1 <- NULL
 file.locs2 <- NULL
 for (i in seq(1:length(folders))){
   file.locs1 <- do.call(paste, 
-               list('p:/obrien/biotelemetry/detections', folders[i], 
+               list(folders[i], 
                     list.files(path = folders[i], pattern = '*.csv'), sep = '/'))
   file.locs2 <- c(file.locs2, file.locs1)
 }
