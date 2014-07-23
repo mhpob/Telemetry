@@ -1,4 +1,5 @@
 library(ggplot2); library(raster); library(animation)
+source('sb_detections.R')
 anim.data <- secor.sb
 anim.data$date.floor <- floor_date(anim.data$date.local, unit = 'day')
 
@@ -20,7 +21,7 @@ anim.data[, 2] <- ymd(anim.data[, 2])
 # Note: If you use MD-only map, you have to filter outside points off.
 # MAB: c(42, -77.5), c(36.5, -69)
 library(OpenStreetMap)
-map <- openmap(c(42, -77.5), c(36.5, -69), type = 'mapquest-aerial')
+map <- openmap(c(42.8, -77.5), c(36.5, -69), type = 'mapquest-aerial')
 map <- autoplot.OpenStreetMap(openproj(map))
 
 # mapdat <- shapefile('p:/obrien/gis/shapefiles/10m coastline_natural earth/ne_10m_land.shp')
