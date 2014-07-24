@@ -53,7 +53,12 @@ detects$array <- ifelse(detects[,4] == 'CBL Pier', 'CBL Pier',
           ifelse(arr('marsh'), 'Marshyhope',
           ifelse(arr('nan'), 'Nanticoke',
           ifelse(arr('poco'), 'Pocomoke',
-                 'Other')))))))))
+          ifelse(arr('repo'), 'Reports',
+          ifelse(arr('dmf') | arr('vine'), 'Mass',
+          ifelse(detects$station %in% c('CC LS', 'LC2', 'NCD', 'NN 1ER FWS',
+                                        'NN 22 NOAA SP', 'NN DANGER FWS', 'Y wat'),
+                 'Navy',
+                 'Other'))))))))))))
 
 # False detections as determined by VEMCO
 false.det <- c('37119', '64288')
