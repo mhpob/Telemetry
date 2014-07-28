@@ -1,11 +1,12 @@
-setwd('p:/obrien/biotelemetry/detections')
 source('detection_sort.R')
 
-act <- read.csv('active transmitters 6-25-14.csv', header = T, stringsAsFactors = F)
+act <- read.csv('p:/obrien/biotelemetry/detections/active transmitters 7-22-14.csv',
+                header = T, stringsAsFactors = F)
 
 # Filter for ID'ed detections that aren't Dave's
 id <- filter(act, Tag.ID.Code.Standard %in% detects$transmitter,
-                  !Tag.ID.Code.Standard %in% paste('A69-1601', seq(25434, 25505), sep = '-'))
+                  !Tag.ID.Code.Standard %in%
+                    paste('A69-1601', seq(25434, 25505), sep = '-'))
 
 id <- merge(detects, id[, c(1:2, 14:15)],
            by.x = c('transmitter', 'trans.num'),
