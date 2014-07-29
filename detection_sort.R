@@ -1,10 +1,12 @@
 library(lubridate); library(dplyr); library(reshape2)
 
-
+# List all files within the "detections" folder
 files <- list.files(path = 'p:/obrien/biotelemetry/detections')
 files <- paste0('p:/obrien/biotelemetry/detections/', files)
+# Pull out sub-folders within the "detections" folder
 folders <- files[file.info(files)$isdir]
 
+# Create file paths for all files ending in ".csv" within the sub-folders
 file.locs1 <- NULL
 file.locs2 <- NULL
 for (i in seq(1:length(folders))){
@@ -14,6 +16,7 @@ for (i in seq(1:length(folders))){
   file.locs2 <- c(file.locs2, file.locs1)
 }
 
+# Read in files located by the steps above and rename columns
 detect.list <- lapply(file.locs2, FUN = read.csv, header = T, stringsAsFactors = F)
 for (i in seq(1:length(detect.list))){
   names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
@@ -21,6 +24,8 @@ for (i in seq(1:length(detect.list))){
                                'station', 'lat', 'long')
 }
 
+# Make the list into a big data frame, drop emtpy columns, convert UTC to EST/EDT,
+# pull out the transmitter ID
 detects <- do.call(rbind.data.frame, detect.list)
 detects <- detects[,c(1:3, 8, 9:10)]
 detects$date.utc <- ymd_hms(detects$date.utc)
@@ -29,9 +34,9 @@ detects$trans.num <- as.numeric(sapply(strsplit(detects[,3], '-'),'[[',3))
 
 # Some data from MD DNR came in with location data missing
 dnr <- data.frame(receiver = c('VR2W-106474', 'VR2W-102036', 'VR2W-106473',
-                             'VR2W-106478', 'VR2W-123776'),
+                               'VR2W-106478', 'VR2W-123776'),
                 station1 = c('Kent Island A', 'Kent Island B', 'Kent Island C',
-                            'Kent Island D', 'Choptank/USCG Lighted Buoy 1'),
+                             'Kent Island D', 'Choptank/USCG Lighted Buoy 1'),
                 lat1 = c(38.9953333, 38.9913167, 38.9841500, 38.9799167, 38.5762694),
                 long1 = c(-76.3995333, -76.3902333, -76.3727833, -76.3539667, -76.0649111),
                 stringsAsFactors = F)
