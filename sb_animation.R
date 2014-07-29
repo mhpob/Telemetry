@@ -1,13 +1,28 @@
+# This creates an animated map of detections, which has a dot whose size is
+# scaled by the number of individual fish detected that day. You need to have ggplot,
+# raster (if you want to use a shapefile) or OpenStreetMap (if you want a
+# satellite image), and animation packages installed. The animation package 
+# also needs you to install ImageMagick (http://www.imagemagick.org) in order
+# to create .gif files.
+
 library(ggplot2); library(raster); library(animation)
 source('sb_detections.R')
 anim.data <- secor.sb
+# Round down date/time
 anim.data$date.floor <- floor_date(anim.data$date.local, unit = 'day')
 
+# Drop repeated detections within the same day (Unique trans.num, station, 
+# date.floor combinations)
 anim.data <- anim.data[row.names(unique(anim.data[,c(1,5,14)])),]
 
+# Total number of fish detected per reciever per day
 anim.data <- as.data.frame(table(anim.data[, c(5,14)]), stringsAsFactors = F)
+# Only those station/day combinations where fish were detected
 anim.data <- filter(anim.data, Freq > 0)
+# Merge back in station locations
 anim.data <- (merge(anim.data, unique(secor.sb[, 5:7]), all.x=T))
+
+# Attach date/place where the fish were tagged (i.e., their first observation)
 anim.data <- rbind(anim.data, 
                     c('Piccowaxen', '2014-03-30', 16, 38.337413, -76.938424),
                     c('Piccowaxen', '2014-04-01', 27, 38.337413, -76.938424),
@@ -24,6 +39,7 @@ library(OpenStreetMap)
 map <- openmap(c(42.8, -77.5), c(36.5, -69), type = 'mapquest-aerial')
 map <- autoplot.OpenStreetMap(openproj(map))
 
+# Use code below if there is a shapefile you'd like to use
 # mapdat <- shapefile('p:/obrien/gis/shapefiles/10m coastline_natural earth/ne_10m_land.shp')
 # mapdat <- fortify(mapdat)
 # map <- ggplot() + geom_path(data = mapdat, aes(long, lat, group = group)) +
@@ -32,6 +48,7 @@ map <- autoplot.OpenStreetMap(openproj(map))
 dates <- seq(ymd('2014-03-30'), ymd('2014-07-10'), by = 'day')
 max.freq <- max(anim.data$Freq)
 
+# Map with no inset
 saveGIF({
   for (i in 1:length(dates)){
   plot <- map + geom_point(data = filter(anim.data, date.floor == dates[i], 
@@ -59,7 +76,9 @@ saveGIF({
   }
 }, interval = 0.5, outdir = getwd())
 
-## Create an inset map (MD Bay Portion)
+
+
+## Create an inset map of MD Chesapeake Bay
 map2 <- openmap(c(39.356, -77.371), c(37.897, -75.626), type = 'mapquest-aerial')
 map2 <- autoplot.OpenStreetMap(openproj(map2))
  
