@@ -1,5 +1,6 @@
-source('detection_sort.R')
+source('vemsort.R')
 
+detects <- vemsort('p:/obrien/biotelemetry/detections')
 act <- read.csv('p:/obrien/biotelemetry/detections/active transmitters 7-22-14.csv',
                 header = T, stringsAsFactors = F)
 
@@ -19,7 +20,7 @@ j <- split(id, id$Primary.Researcher)
 
 
 stdate <- ymd(20140605)
-enddate <- ymd(20140717) + days(1)
+enddate <- ymd(20140804) + days(1)
 
 for(i in seq(length(j))){
 j[[i]] <- j[[i]][c(1,3:7)]
