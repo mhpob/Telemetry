@@ -45,7 +45,7 @@ map <- autoplot.OpenStreetMap(openproj(map))
 # map <- ggplot() + geom_path(data = mapdat, aes(long, lat, group = group)) +
 #   coord_map(xlim = c(-77.5, -69), ylim = c(36.5, 42))
 
-dates <- seq(ymd('2014-03-30'), ymd('2014-07-10'), by = 'day')
+dates <- seq(ymd('2014-03-30'), ymd('2014-08-04'), by = 'day')
 max.freq <- max(anim.data$Freq)
 
 # Map with no inset
@@ -82,7 +82,7 @@ saveGIF({
 map2 <- openmap(c(39.356, -77.371), c(37.897, -75.626), type = 'mapquest-aerial')
 map2 <- autoplot.OpenStreetMap(openproj(map2))
  
-saveGIF({
+saveHTML({
   for (i in 1:length(dates)){
   plot <- map + geom_point(data = filter(anim.data, date.floor == dates[i]),
                       aes(x = long, y = lat, size = Freq), color = 'red') +
@@ -124,4 +124,4 @@ saveGIF({
     print(plot)
     ani.pause()
   }
-}, interval = 0.5, outdir = getwd())
+}, interval = 0.5, outdir = 'p:/obrien/biotelemetry')
