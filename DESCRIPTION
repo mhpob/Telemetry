@@ -1,8 +1,15 @@
 Package: TelemetryR
-Title: What the package does (short line)
+Title: Handle VEMCO detection data.
 Version: 0.1
-Authors@R: "First Last <first.last@example.com> [aut, cre]"
-Description: What the package does (paragraph)
-Depends: R (>= 3.1.1)
+Authors@R: "Mike O'Brien <obrien@umces.edu> [aut, cre]"
+Description: Aggregates, sorts, and prepares detections to be dispersed to the
+    ACT database. Also houses a couple fun functions used to play with
+    the data.
+Depends:
+    R (>= 3.1.1)
+Imports:
+    dplyr,
+    lubridate,
+    ggplot2
 License: What license is it under?
 LazyData: true
