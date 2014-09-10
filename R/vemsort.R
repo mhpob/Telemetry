@@ -47,12 +47,14 @@ vemsort <- function(directory = getwd(), false.det) {
                                  'station', 'lat', 'long')
   }
   
-  # Make list into data frame, drop emtpy columns, convert UTC to EST/EDT,
-  # pull out transmitter ID
+  # Make list into data frame
   detects <- do.call(rbind.data.frame, detect.list)
+  # Drop emtpy columns
   detects <- detects[,c(1:3, 8, 9:10)]
+  # Convert UTC to EST/EDT
   detects$date.utc <- ymd_hms(detects$date.utc)
   detects$date.local <- with_tz(detects$date.utc, tz = "America/New_York")
+  # pull out transmitter ID Standard
   detects$trans.num <- as.numeric(sapply(strsplit(detects[,3], '-'),'[[',3))
 
   detects <- unique(filter(detects, !trans.num %in% false.det))
