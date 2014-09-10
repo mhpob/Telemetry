@@ -6,7 +6,7 @@
 # to create .gif files.
 
 library(ggplot2); library(raster); library(animation)
-source('sb_detections.R')
+source('striped bass/sb_detections.R')
 anim.data <- secor.sb
 # Round down date/time
 anim.data$date.floor <- floor_date(anim.data$date.local, unit = 'day')
@@ -74,7 +74,7 @@ saveGIF({
     print(plot)
     ani.pause()
   }
-}, interval = 0.5, outdir = getwd())
+}, interval = 0.5, outdir = 'p:/obrien/biotelemetry')
 
 
 
