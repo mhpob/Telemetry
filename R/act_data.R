@@ -1,7 +1,7 @@
 source('vemsort.R')
 
 detects <- vemsort('p:/obrien/biotelemetry/detections')
-act <- read.csv('p:/obrien/biotelemetry/detections/active transmitters 7-22-14.csv',
+act <- read.csv('p:/obrien/biotelemetry/detections/active transmitters 9-2-14.csv',
                 header = T, stringsAsFactors = F)
 
 # Filter for ID'ed detections that aren't Dave's
