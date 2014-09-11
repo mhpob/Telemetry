@@ -1,6 +1,6 @@
 #' Prepare VEMCO transmitter CSV files for analysis
 #' 
-#' \code{vemsort} finds and combines all CSV files in a directory
+#' \code{vemsort} finds and combines all VEMCO CSV files in a directory
 #' 
 #' This function assumes that all necessary CSV files are within the specified
 #' directory or subdirectories within. All files must have the default headings
@@ -10,7 +10,7 @@
 #' Latitude, Longitude.
 #' 
 #' @param directory String. Location of CSV data, defaults to current wd.
-#' @param false.det Numeric vector. Contains ID standard of known
+#' @param false.det Numeric vector. Contains tag ID codes of known
 #'    false detections.
 #' @return Output is a dplyr table data frame containing all detections from
 #'    the directory's CSV files
@@ -20,7 +20,7 @@
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs', 
 #'          c('37119', '64288'))
 
-vemsort <- function(directory = getwd(), false.det) {
+vemsort <- function(directory = getwd(), false.det = NULL) {
   # List all files within the "detections" folder
   files <- list.files(path = directory)
   files <- paste(directory, files, sep = '/')
@@ -57,7 +57,7 @@ vemsort <- function(directory = getwd(), false.det) {
   # pull out transmitter ID Standard
   detects$trans.num <- as.numeric(sapply(strsplit(detects[,3], '-'),'[[',3))
 
-  detects <- unique(filter(detects, !trans.num %in% false.det))
+  detects <- unique(filter(detects, !transmitter %in% false.det))
   row.names(detects) <- NULL
   
   tbl_df(detects)
