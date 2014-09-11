@@ -41,22 +41,22 @@ ACTsplit <- function(directory = getwd(),
   act <- read.csv(ACT, header = T, stringsAsFactors = F)
   
   # Filter for ID'ed detections that aren't yours
-  id <- filter(act, Tag.ID.Code.Standard %in% detects$transmitter,
-               !Tag.ID.Code.Standard %in% my.trans)
+  id <- dplyr::filter(act, Tag.ID.Code.Standard %in% detects$transmitter,
+                      !Tag.ID.Code.Standard %in% my.trans)
   
   id <- merge(detects, id[, c(1:2, 14:15)],
               by.x = c('transmitter', 'trans.num'),
               by.y = c('Tag.ID.Code.Standard', 'ID.Standard'))
   
-  unid <- filter(detects,
-                 transmitter %in% setdiff(detects$transmitter,
-                                          act$Tag.ID.Code.Standard))
+  unid <- dplyr::filter(detects,
+                        transmitter %in% setdiff(detects$transmitter,
+                                                 act$Tag.ID.Code.Standard))
   print(unid)
   
   j <- split(id, id$Primary.Researcher)
   
-  stdate <- ymd(start)
-  enddate <- ymd(end) + days(1)
+  stdate <- lubridate::ymd(start)
+  enddate <- lubridate::ymd(end) + days(1)
   
   for(i in seq(length(j))){
     j[[i]] <- j[[i]][c(1,3:7)]

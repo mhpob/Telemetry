@@ -52,13 +52,14 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   # Drop emtpy columns
   detects <- detects[,c(1:3, 8, 9:10)]
   # Convert UTC to EST/EDT
-  detects$date.utc <- ymd_hms(detects$date.utc)
-  detects$date.local <- with_tz(detects$date.utc, tz = "America/New_York")
+  detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
+  detects$date.local <- lubridate::with_tz(detects$date.utc,
+                                           tz = "America/New_York")
   # pull out transmitter ID Standard
   detects$trans.num <- as.numeric(sapply(strsplit(detects[,3], '-'),'[[',3))
 
-  detects <- unique(filter(detects, !transmitter %in% false.det))
+  detects <- unique(dplyr::filter(detects, !transmitter %in% false.det))
   row.names(detects) <- NULL
   
-  tbl_df(detects)
+  dplyr::tbl_df(detects)
 }
