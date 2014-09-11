@@ -3,12 +3,12 @@
 \alias{vemsort}
 \title{Prepare VEMCO transmitter CSV files for analysis}
 \usage{
-vemsort(directory = getwd(), false.det)
+vemsort(directory = getwd(), false.det = NULL)
 }
 \arguments{
 \item{directory}{String. Location of CSV data, defaults to current wd.}
 
-\item{false.det}{Numeric vector. Contains ID standard of known
+\item{false.det}{Numeric vector. Contains tag ID codes of known
 false detections.}
 }
 \value{
@@ -16,7 +16,7 @@ Output is a dplyr table data frame containing all detections from
    the directory's CSV files
 }
 \description{
-\code{vemsort} finds and combines all CSV files in a directory
+\code{vemsort} finds and combines all VEMCO CSV files in a directory
 }
 \details{
 This function assumes that all necessary CSV files are within the specified
