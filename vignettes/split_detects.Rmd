@@ -1,0 +1,88 @@
+---
+title: "Splitting Your VEMCO Detections for Distribution to ACT"
+author: "Mike O'Brien <obrien@umces.edu>"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Splitting Your VEMCO Detections for Distribution to ACT}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+
+## Introduction and disclaimers
+
+This code was written so that I could quickly and easily send any detected VEMCO transmitters to those who have provided their tag IDs to the [ACT database](http://www.theactnetwork.com). It was orignally just a script, but I've tried to transform everything into a more user-friendly function. I'm definitely not an expert coder, so these functions were written in a manner that's very specific to how I've organized things. I haven't tested any of this out on a Mac, so I'm not sure if it will work. 
+
+Hopefully, I'll be able to figure out how to make things more generic, but for now I'll use this vignette to decribe how I have things set up. If anything doesn't work, or you come up with any ideas, please feel free to let me know.
+
+Lastly, I know naming a package "TelemetryR" is pretty presuming, but it's just what I called the scripts on my computer when I first started working on them.
+
+
+## Data organization
+
+The way that I, personally, have taken to storing my detection data has been on a server owned by CBL. Since an off-site backup takes place nightly and I can access the data via the internet, this has been more useful than leaving everything in the folder created by the [VUE software](http://vemco.com/products/vue-software/).
+
+On this server, I have a folder which contains all detections, separated by arrays. Note that I have the ACT active transmitter sheet, *in CSV format*, in the main folder...
+
+![](folders.png)
+
+...and the files spit out by VUE in each array's subfolders.
+
+![](vuefiles.png)
+
+
+## Utilizing `vemsort`
+
+What `vemsort` does is take the directory you provide (P:/OBrien/Biotelemetry/Detections in the pictures above) and looks for all *.csv* files within all subfolders, assuming that they will be the *.csv* files provided by VUE. It does a bit of manipulation, including converting the UTC date and time to EST/EDT and pulling out the tag standard. I also prefer working with lower-case names in `R`, so the columns are renamed in the process.
+
+```{r}
+library(TelemetryR)
+vemsort('p:/obrien/biotelemetry/detections')
+```
+
+I can also put in a vector of false detections that I've gotten confirmed by VEMCO. Note the difference in the length of the data frame:
+
+```{r}
+vemsort('p:/obrien/biotelemetry/detections', c('A69-1601-37119','A69-1601-64288'))
+```
+
+If you want to go on and play with the detection data, you can pull out your own detections and stop here.
+
+
+## Splitting things using `ACTsplit`
+
+`ACTsplit` leans on `vemsort` to load all of the detections into R. Because of this, there are a few more arguments to the function: those that go to `vemsort` and those specific to `ACTsplit`. To start, identify the location of your ACT transmitter file. If the ACT transmitter file is in the directory you provided, you're good to go. Note that the function also spits out a data frame of detections not identified by the ACT data base.
+
+```{r}
+# This assumes that the transmitter file is located at
+# p:/obrien/biotelemetry/detections/active transmitters 9-2-14.csv
+ACTsplit('p:/obrien/biotelemetry/detections')
+# These are unidentified detections.
+```
+
+`ACTsplit` will create divvied up *.csv* files and place them in the folder you specified as the directory.
+
+![](final.png)
+
+Done!
+
+## A couple of tweaks that may be needed
+
+If the ACT transmitter file is not in the main directory, you will need to specify where it is.
+
+```{r, eval = F}
+ACTsplit('p:/obrien/biotelemetry/detections', ACT = 'p:/obrien/active transmitters 9-2-14.csv')
+```
+
+You can also specify false and personal detections and give a date range for which detections you want (make sure the date is in year-month-day format). Note that if you specify a date range that no longer contains detections for a specific researcher, the file will still be created. Check to make sure that the files aren't empty before sending them out. I may try to fix this in the future, but it works fine for now.
+
+```{r, eval = F}
+# Splits detections from June 1 up to and including August 1, 2014
+ACTsplit(directory = 'p:/obrien/biotelemetry/detections',
+         my.trans = paste0('A69-1601-',seq(25434,25505)),
+         false.det = c('A69-1601-37119','A69-1601-64288'),
+         start = 20140601, end = 20140801)
+```
+
+Good luck, and contact me with any questions!
