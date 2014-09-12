@@ -67,8 +67,8 @@ ACTsplit <- function(directory = getwd(),
                        'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
     j[[i]] <- j[[i]][order(j[[i]][3], j[[i]][1]),]
     j[[i]] <- j[[i]][j[[i]][,1] >= stdate & j[[i]][,1] <= enddate,]
-    write.csv(j[[i]], file = paste(gsub(' ', '', names(j[i])),
-                                   Sys.Date(),'.csv', sep = ''),
+    write.csv(j[[i]], file = paste(directory, paste0(gsub(' ', '', names(j[i])),
+                                   Sys.Date(),'.csv'), sep = '/'),
               row.names = F)
   }
 }
