@@ -56,7 +56,7 @@ ACTsplit <- function(directory = getwd(),
   j <- split(id, id$Primary.Researcher)
   
   stdate <- lubridate::ymd(start)
-  enddate <- lubridate::ymd(end) + days(1)
+  enddate <- lubridate::ymd(end) + lubridate::days(1)
   
   for(i in seq(length(j))){
     j[[i]] <- j[[i]][c(1,3:7)]

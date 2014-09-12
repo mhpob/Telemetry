@@ -13,3 +13,6 @@ Imports:
     ggplot2
 License: What license is it under?
 LazyData: true
+Suggests:
+    knitr
+VignetteBuilder: knitr
