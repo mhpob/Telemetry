@@ -20,6 +20,8 @@
 #'    detections. Defaults to Jan 1, 2000.
 #' @param end Numeric. Date in ymd form to stop pulling detections. Defaults to
 #'    current system date.
+#' @param write Logical. Do you want to output .csv files? Useful if you are
+#'    only looking for unidentified detections.
 #' @return Outputs are CSV files in the form of ResearcherCurrentate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
 #'    will be found in your current working directory.
@@ -35,7 +37,7 @@
 ACTsplit <- function(directory = getwd(),
               ACT = paste(directory,list.files(directory, 'Active'), sep = "/"),
               my.trans = NULL, false.det = NULL,
-              start = 20000101, end = Sys.Date()){
+              start = 20000101, end = Sys.Date(), write = TRUE){
   
   detects <- vemsort(directory, false.det)
   act <- read.csv(ACT, header = T, stringsAsFactors = F)
@@ -51,24 +53,27 @@ ACTsplit <- function(directory = getwd(),
   unid <- dplyr::filter(detects,
                         transmitter %in% setdiff(detects$transmitter,
                                                  act$Tag.ID.Code.Standard))
-  print(unid)
   
   j <- split(id, id$Primary.Researcher)
   
   stdate <- lubridate::ymd(start)
   enddate <- lubridate::ymd(end) + lubridate::days(1)
   
-  for(i in seq(length(j))){
-    j[[i]] <- j[[i]][c(1,3:7)]
-    j[[i]][7:10] <- NA
-    j[[i]] <- j[[i]][c(2, 3, 1, 7:10, 4:6)]
-    names(j[[i]]) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
-                       'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
-                       'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
-    j[[i]] <- j[[i]][order(j[[i]][3], j[[i]][1]),]
-    j[[i]] <- j[[i]][j[[i]][,1] >= stdate & j[[i]][,1] <= enddate,]
-    write.csv(j[[i]], file = paste(directory, paste0(gsub(' ', '', names(j[i])),
-                                   Sys.Date(),'.csv'), sep = '/'),
-              row.names = F)
+  if(write == TRUE){
+    for(i in seq(length(j))){
+      j[[i]] <- j[[i]][c(1,3:7)]
+      j[[i]][7:10] <- NA
+      j[[i]] <- j[[i]][c(2, 3, 1, 7:10, 4:6)]
+      names(j[[i]]) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
+                    'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
+                    'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
+      j[[i]] <- j[[i]][order(j[[i]][3], j[[i]][1]),]
+      j[[i]] <- j[[i]][j[[i]][,1] >= stdate & j[[i]][,1] <= enddate,]
+      write.csv(j[[i]], file = paste(directory,
+                                     paste0(gsub(' ', '', names(j[i])),
+                                            Sys.Date(),'.csv'), sep = '/'),
+                row.names = F)
+    }
   }
+  unid
 }

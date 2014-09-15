@@ -5,7 +5,7 @@
 \usage{
 ACTsplit(directory = getwd(), ACT = paste(directory, list.files(directory,
   "Active"), sep = "/"), my.trans = NULL, false.det = NULL,
-  start = 20000101, end = Sys.Date())
+  start = 20000101, end = Sys.Date(), write = TRUE)
 }
 \arguments{
 \item{directory}{String passed on to \code{vemsort}. Location of CSV data,
@@ -26,6 +26,9 @@ detections. Defaults to Jan 1, 2000.}
 
 \item{end}{Numeric. Date in ymd form to stop pulling detections. Defaults to
 current system date.}
+
+\item{write}{Logical. Do you want to output .csv files? Useful if you are
+only looking for unidentified detections.}
 }
 \value{
 Outputs are CSV files in the form of ResearcherCurrentate.csv and a
