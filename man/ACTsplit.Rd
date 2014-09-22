@@ -4,8 +4,8 @@
 \title{Split detections into CSV files according to ACT database}
 \usage{
 ACTsplit(directory = getwd(), ACT = paste(directory, list.files(directory,
-  "Active"), sep = "/"), my.trans = NULL, false.det = NULL,
-  start = 20000101, end = Sys.Date(), write = TRUE)
+  "Active"), sep = "/"), my.trans = NULL, false.det = NULL, write = TRUE,
+  out = NULL, start = 20000101, end = Sys.Date())
 }
 \arguments{
 \item{directory}{String passed on to \code{vemsort}. Location of CSV data,
@@ -21,19 +21,21 @@ to distribution.}
 \item{false.det}{Numeric vector passed on to \code{vemsort}. Contains tag ID
 codes of known false detections.}
 
+\item{write}{Logical. Do you want to output CSV files? Useful if you are
+only looking for unidentified detections.}
+
+\item{out}{String. Where do you want the CSV files placed?}
+
 \item{start}{Numeric. Date in ymd form from which you want to start pulling
 detections. Defaults to Jan 1, 2000.}
 
 \item{end}{Numeric. Date in ymd form to stop pulling detections. Defaults to
 current system date.}
-
-\item{write}{Logical. Do you want to output .csv files? Useful if you are
-only looking for unidentified detections.}
 }
 \value{
 Outputs are CSV files in the form of ResearcherCurrentate.csv and a
    data frame containing detections of unidentified codes. The CSV files
-   will be found in your current working directory.
+   will be found in your current working directory by default.
 }
 \description{
 \code{ACTsplit} filters all detections according to the researchers in ACT

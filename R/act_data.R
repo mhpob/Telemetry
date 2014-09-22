@@ -16,15 +16,16 @@
 #'    to distribution.
 #' @param false.det Numeric vector passed on to \code{vemsort}. Contains tag ID
 #'    codes of known false detections.
+#' @param write Logical. Do you want to output CSV files? Useful if you are
+#'    only looking for unidentified detections.
+#' @param out String. Where do you want the CSV files placed?
 #' @param start Numeric. Date in ymd form from which you want to start pulling
 #'    detections. Defaults to Jan 1, 2000.
 #' @param end Numeric. Date in ymd form to stop pulling detections. Defaults to
 #'    current system date.
-#' @param write Logical. Do you want to output .csv files? Useful if you are
-#'    only looking for unidentified detections.
 #' @return Outputs are CSV files in the form of ResearcherCurrentate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
-#'    will be found in your current working directory.
+#'    will be found in your current working directory by default.
 #' @export
 #' @examples
 #' ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
