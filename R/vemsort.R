@@ -40,7 +40,9 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
       file.locs2 <- c(file.locs2, file.locs1)
     }
   } else{
-    file.locs2 <- files
+    file.locs2 <- paste(directory,
+                        list.files(path = directory, pattern = '*.csv'),
+                        sep = '/')
   }
   
   # Read in files located by the steps above and rename columns
