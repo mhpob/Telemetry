@@ -36,8 +36,8 @@
 
 ACTsplit <- function(directory = getwd(),
               ACT = paste(directory,list.files(directory, 'Active'), sep = "/"),
-              my.trans = NULL, false.det = NULL,
-              start = 20000101, end = Sys.Date(), write = TRUE){
+              my.trans = NULL, false.det = NULL, write = TRUE, out = NULL,
+              start = 20000101, end = Sys.Date()){
   
   detects <- if(is.data.frame(directory)){
     directory
@@ -67,7 +67,9 @@ ACTsplit <- function(directory = getwd(),
   stdate <- lubridate::ymd(start)
   enddate <- lubridate::ymd(end) + lubridate::days(1)
   
-  csv.root <- ifelse(is.data.frame(directory), getwd(), directory)
+  csv.root <- ifelse(!is.null(out), out,
+                     ifelse(is.data.frame(directory),
+                            getwd(), directory))
   
   if(write == TRUE){
     for(i in seq(length(j))){
