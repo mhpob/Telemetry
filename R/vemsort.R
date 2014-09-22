@@ -30,12 +30,17 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   # Create file paths for all files ending in ".csv" within the sub-folders
   file.locs1 <- NULL
   file.locs2 <- NULL
-  for (i in seq(1:length(folders))){
-    file.locs1 <- do.call(paste, 
-                 list(folders[i], 
-                      list.files(path = folders[i], pattern = '*.csv'),
-                      sep = '/'))
-    file.locs2 <- c(file.locs2, file.locs1)
+  if(length(folders) > 0L){
+    for (i in seq(1:length(folders))){
+      file.locs1 <- do.call(paste,
+                            list(folders[i],
+                                 list.files(path = folders[i],
+                                            pattern = '*.csv'),
+                                 sep = '/'))
+      file.locs2 <- c(file.locs2, file.locs1)
+    }
+  } else{
+    file.locs2 <- files
   }
   
   # Read in files located by the steps above and rename columns
