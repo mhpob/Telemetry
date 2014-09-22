@@ -39,9 +39,17 @@ ACTsplit <- function(directory = getwd(),
               my.trans = NULL, false.det = NULL,
               start = 20000101, end = Sys.Date(), write = TRUE){
   
-  detects <- vemsort(directory, false.det)
-  act <- read.csv(ACT, header = T, stringsAsFactors = F)
-  
+  detects <- if(is.data.frame(directory)){
+    directory
+    } else{
+      vemsort(directory, false.det)
+    }
+  act <- if(is.data.frame(ACT)){
+    ACT
+    } else{
+      read.csv(ACT, header = T, stringsAsFactors = F)
+    }
+
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(act, Tag.ID.Code.Standard %in% detects$transmitter,
                       !Tag.ID.Code.Standard %in% my.trans)
@@ -59,6 +67,8 @@ ACTsplit <- function(directory = getwd(),
   stdate <- lubridate::ymd(start)
   enddate <- lubridate::ymd(end) + lubridate::days(1)
   
+  csv.root <- ifelse(is.data.frame(directory), getwd(), directory)
+  
   if(write == TRUE){
     for(i in seq(length(j))){
       j[[i]] <- j[[i]][c(1,3:7)]
@@ -69,7 +79,7 @@ ACTsplit <- function(directory = getwd(),
                     'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
       j[[i]] <- j[[i]][order(j[[i]][3], j[[i]][1]),]
       j[[i]] <- j[[i]][j[[i]][,1] >= stdate & j[[i]][,1] <= enddate,]
-      write.csv(j[[i]], file = paste(directory,
+      write.csv(j[[i]], file = paste(csv.root,
                                      paste0(gsub(' ', '', names(j[i])),
                                             Sys.Date(),'.csv'), sep = '/'),
                 row.names = F)
