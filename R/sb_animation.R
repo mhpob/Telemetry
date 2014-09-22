@@ -39,7 +39,7 @@
 # map <- openmap(c(42.8, -77.5), c(36.5, -69), type = 'mapquest-aerial')
 # map <- autoplot.OpenStreetMap(openproj(map))
 # 
-# # Use code below if there is a shapefile you'd like to use
+# # Use code below if there is a shapefile you'd like to use. Note that capitalization matters in actual file name!!
 # # mapdat <- shapefile('p:/obrien/gis/shapefiles/10m coastline_natural earth/ne_10m_land.shp')
 # # mapdat <- fortify(mapdat)
 # # map <- ggplot() + geom_path(data = mapdat, aes(long, lat, group = group)) +
