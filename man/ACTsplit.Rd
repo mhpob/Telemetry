@@ -3,17 +3,12 @@
 \alias{ACTsplit}
 \title{Split detections into CSV files according to ACT database}
 \usage{
-ACTsplit(directory = getwd(), ACT = paste(directory, list.files(directory,
-  "Active"), sep = "/"), my.trans = NULL, false.det = NULL, write = TRUE,
-  out = NULL, start = 20000101, end = Sys.Date())
+ACTsplit(directory = getwd(), my.trans = NULL, false.det = NULL,
+  write = TRUE, out = NULL, start = 20000101, end = Sys.Date())
 }
 \arguments{
 \item{directory}{String passed on to \code{vemsort}. Location of CSV data,
 which defaults to current wd.}
-
-\item{ACT}{String. Location of ACT's 'Active transmitters M-D-YY.csv' sheet.
-File must be pre-converted from XLSX to CSV in order to work. Defaults to
-a file with "Active" in the name within listed directory.}
 
 \item{my.trans}{Numeric vector. Tag ID codes that you want removed prior
 to distribution.}
@@ -33,7 +28,7 @@ detections. Defaults to Jan 1, 2000.}
 current system date.}
 }
 \value{
-Outputs are CSV files in the form of ResearcherCurrentate.csv and a
+Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
    data frame containing detections of unidentified codes. The CSV files
    will be found in your current working directory by default.
 }
@@ -48,10 +43,8 @@ detections.
 }
 \examples{
 ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
-# Specify a different location for ACT transmitters and choose detections
-# from April 1, 2014 up to and including August 1, 2014.
+# Choose detections from April 1, 2014 up to and including August 1, 2014.
 ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
-         'C:/Users/MYPCNAME/Documents/Active transmitters 9-2-14.csv',
            start = 20140401, end = 20140801)
 }
 
