@@ -52,11 +52,9 @@ If you want to go on and play with the detection data, you can pull out your own
 
 ## Splitting things using `ACTsplit`
 
-`ACTsplit` leans on `vemsort` to load all of the detections into R. Because of this, there are a few more arguments to the function: those that go to `vemsort` and those specific to `ACTsplit`. To start, identify the location of your ACT transmitter file. If the ACT transmitter file is in the directory you provided, you're good to go. Note that the function also spits out a data frame of detections not identified by the ACT data base.
+`ACTsplit` leans on `vemsort` to load all of the detections into R. Because of this, there are a few more arguments to the function: those that go to `vemsort` and those specific to `ACTsplit`. You can also provide `ACTsplit` with an object previously created by `vemsort`. This is useful if you need to do more manipulation than `vemsort` offers before you disperse your detections to ACT. Note that the function also spits out a data frame of detections not identified by the ACT data base.
 
 ```{r}
-# This assumes that the transmitter file is located at
-# p:/obrien/biotelemetry/detections/active transmitters 9-2-14.csv
 ACTsplit('p:/obrien/biotelemetry/detections')
 # These are unidentified detections.
 ```
@@ -69,13 +67,14 @@ Done!
 
 ## A couple of tweaks that may be needed
 
-If the ACT transmitter file is not in the main directory, you will need to specify where it is.
+If you don't want the *.csv* files to be written in your working directory, you can choose `write = F` or specify a different output folder in the `out` argument.
 
 ```{r, eval = F}
-ACTsplit('p:/obrien/biotelemetry/detections', ACT = 'p:/obrien/active transmitters 9-2-14.csv')
+ACTsplit(directory = 'p:/obrien/biotelemetry/detections',
+         write = F, out = 'c:/users/secor lab/desktop')
 ```
 
-You can also specify false and personal detections and give a date range for which detections you want (make sure the date is in year-month-day format). Note that if you specify a date range that no longer contains detections for a specific researcher, the file will still be created. Check to make sure that the files aren't empty before sending them out. I may try to fix this in the future, but it works fine for now.
+You can also provide false and personal detections and give a date range for which detections you want (make sure the date is in year-month-day format).
 
 ```{r, eval = F}
 # Splits detections from June 1 up to and including August 1, 2014
