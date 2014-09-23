@@ -10,7 +10,7 @@
 
 <meta name="author" content="Mike O’Brien obrien@umces.edu" />
 
-<meta name="date" content="2014-09-12" />
+<meta name="date" content="2014-09-23" />
 
 <title>Splitting Your VEMCO Detections for Distribution to ACT</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">Splitting Your VEMCO Detections for Distribution to ACT</h1>
 <h4 class="author"><em>Mike O’Brien <a href="mailto:obrien@umces.edu">obrien@umces.edu</a></em></h4>
-<h4 class="date"><em>2014-09-12</em></h4>
+<h4 class="date"><em>2014-09-23</em></h4>
 </div>
 
 
@@ -77,7 +77,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>What <code>vemsort</code> does is take the directory you provide (P:/OBrien/Biotelemetry/Detections in the pictures above) and looks for all <em>.csv</em> files within all subfolders, assuming that they will be the <em>.csv</em> files provided by VUE. It does a bit of manipulation, including converting the UTC date and time to EST/EDT and pulling out the tag standard. I also prefer working with lower-case names in <code>R</code>, so the columns are renamed in the process.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(TelemetryR)
 <span class="kw">vemsort</span>(<span class="st">'p:/obrien/biotelemetry/detections'</span>)</code></pre>
-<pre><code>## Source: local data frame [89,132 x 8]
+<pre><code>## Source: local data frame [230,209 x 8]
 ## 
 ##               date.utc    receiver    transmitter  station   lat   long
 ## 1  2014-03-21 22:45:52 VR2W-106470 A69-1601-32373 CBL Pier 38.32 -76.45
@@ -94,7 +94,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Variables not shown: date.local (time), trans.num (dbl)</code></pre>
 <p>I can also put in a vector of false detections that I’ve gotten confirmed by VEMCO. Note the difference in the length of the data frame:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">vemsort</span>(<span class="st">'p:/obrien/biotelemetry/detections'</span>, <span class="kw">c</span>(<span class="st">'A69-1601-37119'</span>,<span class="st">'A69-1601-64288'</span>))</code></pre>
-<pre><code>## Source: local data frame [89,130 x 8]
+<pre><code>## Source: local data frame [230,207 x 8]
 ## 
 ##               date.utc    receiver    transmitter  station   lat   long
 ## 1  2014-03-21 22:45:52 VR2W-106470 A69-1601-32373 CBL Pier 38.32 -76.45
@@ -113,11 +113,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="splitting-things-using-actsplit" class="section level2">
 <h2>Splitting things using <code>ACTsplit</code></h2>
-<p><code>ACTsplit</code> leans on <code>vemsort</code> to load all of the detections into R. Because of this, there are a few more arguments to the function: those that go to <code>vemsort</code> and those specific to <code>ACTsplit</code>. To start, identify the location of your ACT transmitter file. If the ACT transmitter file is in the directory you provided, you’re good to go. Note that the function also spits out a data frame of detections not identified by the ACT data base.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># This assumes that the transmitter file is located at</span>
-<span class="co"># p:/obrien/biotelemetry/detections/active transmitters 9-2-14.csv</span>
-<span class="kw">ACTsplit</span>(<span class="st">'p:/obrien/biotelemetry/detections'</span>)</code></pre>
-<pre><code>## Source: local data frame [162 x 8]
+<p><code>ACTsplit</code> leans on <code>vemsort</code> to load all of the detections into R. Because of this, there are a few more arguments to the function: those that go to <code>vemsort</code> and those specific to <code>ACTsplit</code>. You can also provide <code>ACTsplit</code> with an object previously created by <code>vemsort</code>. This is useful if you need to do more manipulation than <code>vemsort</code> offers before you disperse your detections to ACT. Note that the function also spits out a data frame of detections not identified by the ACT data base.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ACTsplit</span>(<span class="st">'p:/obrien/biotelemetry/detections'</span>)</code></pre>
+<pre><code>## Source: local data frame [2,791 x 8]
 ## 
 ##               date.utc    receiver    transmitter       station   lat
 ## 1  2014-06-25 05:47:10 VR2W-110034 A69-1601-17232 Cedar Point B 38.30
@@ -139,9 +137,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="a-couple-of-tweaks-that-may-be-needed" class="section level2">
 <h2>A couple of tweaks that may be needed</h2>
-<p>If the ACT transmitter file is not in the main directory, you will need to specify where it is.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ACTsplit</span>(<span class="st">'p:/obrien/biotelemetry/detections'</span>, <span class="dt">ACT =</span> <span class="st">'p:/obrien/active transmitters 9-2-14.csv'</span>)</code></pre>
-<p>You can also specify false and personal detections and give a date range for which detections you want (make sure the date is in year-month-day format). Note that if you specify a date range that no longer contains detections for a specific researcher, the file will still be created. Check to make sure that the files aren’t empty before sending them out. I may try to fix this in the future, but it works fine for now.</p>
+<p>If you don’t want the <em>.csv</em> files to be written in your working directory, you can choose <code>write = F</code> or specify a different output folder in the <code>out</code> argument.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ACTsplit</span>(<span class="dt">directory =</span> <span class="st">'p:/obrien/biotelemetry/detections'</span>,
+         <span class="dt">write =</span> F, <span class="dt">out =</span> <span class="st">'c:/users/secor lab/desktop'</span>)</code></pre>
+<p>You can also provide false and personal detections and give a date range for which detections you want (make sure the date is in year-month-day format).</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Splits detections from June 1 up to and including August 1, 2014</span>
 <span class="kw">ACTsplit</span>(<span class="dt">directory =</span> <span class="st">'p:/obrien/biotelemetry/detections'</span>,
          <span class="dt">my.trans =</span> <span class="kw">paste0</span>(<span class="st">'A69-1601-'</span>,<span class="kw">seq</span>(<span class="dv">25434</span>,<span class="dv">25505</span>)),

@@ -40,6 +40,14 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
       vemsort(directory, false.det)
     }
   
+  # Filter for date range
+  stdate <- lubridate::ymd(start, tz = 'America/New_York')
+  enddate <- lubridate::ymd(end, tz = 'America/New_York')
+  
+  detects <- dplyr::filter(detects,
+                           lubridate::floor_date(date.local, "day") >= stdate &
+                           lubridate::floor_date(date.local, "day") <= enddate)
+  
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
                       !Tag.ID.Code.Standard %in% my.trans)
@@ -54,9 +62,6 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
   
   j <- split(id, id$Primary.Researcher)
   
-  stdate <- lubridate::ymd(start)
-  enddate <- lubridate::ymd(end) + lubridate::days(1)
-  
   csv.root <- ifelse(!is.null(out), out,
                      ifelse(is.data.frame(directory),
                             getwd(), directory))
@@ -70,12 +75,16 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
                     'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
                     'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
       j[[i]] <- j[[i]][order(j[[i]][3], j[[i]][1]),]
-      j[[i]] <- j[[i]][j[[i]][,1] >= stdate & j[[i]][,1] <= enddate,]
       write.csv(j[[i]], file = paste(csv.root,
                                      paste0(gsub(' ', '', names(j[i])),
                                             Sys.Date(),'.csv'), sep = '/'),
                 row.names = F)
     }
   }
-  unid
+  
+  if(dim(unid)[1] == 0){
+    message('There were no unidentified detections!')
+  } else{
+    unid
+  }
 }
