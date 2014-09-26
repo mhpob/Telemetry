@@ -1,16 +1,28 @@
-# The following was adopted from an answer on R-Help, 20061107, by Arien Lam
-# https://stat.ethz.ch/pipermail/r-help/2006-November/116851.html
-
-# Computes the place where you end up, if you travel a certain distance along
-# a great circle, which is uniquely defined by a point (your starting point)
-# and an angle with the meridian at that point (your direction).
-# 
-# lonlatpoint is a set of longitude and latitude pairs (decimal degrees)
-# radius is the radius of desired circle, in m.
-# Rearth is the "ellipsoidal quadratic mean radius of the earth", in m. (FYI)
+#' Draw circles around a Lat/Long point
+#'
+#' \code{ptcirc} creates a data frame of points forming a circle around a point.
+#' 
+#' The function was adopted from an answer on R-Help, 20061107, by Arien Lam
+#' https://stat.ethz.ch/pipermail/r-help/2006-November/116851.html
+#' Each point is the place where you end up if you travel a certain distance
+#' along a great circle, which is uniquely defined by a point (your
+#' starting point) and an angle with the meridian at that point (your
+#' direction).
+#' 
+#' @param lonlatpoint Numeric vector. A set of longitude and latitude pairs
+#'    (decimal degrees), in that order. Can be a data frame or matrix, but the
+#'    first column must be the longitude and the second must be latitude.
+#' @param radius Numeric. Radius of desired circle, in m.
+#' @return Output is a data frame with longitude, latitude, and "circle"
+#'    columns. The circle column demarcates circles belonging to different
+#'    Lon/Lat pairs.
+#' @export
+#' @examples
+#' ptcirc(c(-75,37), 1609)
+#' ptcirc(data.frame(lon = c(-76,-80), lat = c(34,37)), 2000)
 
 ptcirc <- function(lonlatpoint, radius) {
-     Rearth <- 6372795
+     Rearth <- 6372795 #"ellipsoidal quadratic mean radius of the earth", in m.
      magnitude <- radius / Rearth
      
      lonlatpoint <- unique(lonlatpoint)
