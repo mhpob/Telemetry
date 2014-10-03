@@ -2,4 +2,5 @@
 
 export(ACTsplit)
 export(ptcirc)
+export(sturgrow)
 export(vemsort)
