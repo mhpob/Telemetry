@@ -6,7 +6,7 @@
 # # to create .gif files.
 # 
 # library(ggplot2); library(raster); library(animation)
-# source('striped bass/sb_detections.R')
+# source('p:/obrien/biotelemetry/telemetryr/sb_detections.R')
 # anim.data <- secor.sb
 # # Round down date/time
 # anim.data$date.floor <- floor_date(anim.data$date.local, unit = 'day')
@@ -36,7 +36,7 @@
 # # Note: If you use MD-only map, you have to filter outside points off.
 # # MAB: c(42, -77.5), c(36.5, -69)
 # library(OpenStreetMap)
-# map <- openmap(c(42.8, -77.5), c(36.5, -69), type = 'mapquest-aerial')
+# map <- openmap(c(42.9, -77.5), c(36.5, -69), type = 'mapquest-aerial')
 # map <- autoplot.OpenStreetMap(openproj(map))
 # 
 # # Use code below if there is a shapefile you'd like to use. Note that capitalization matters in actual file name!!
@@ -45,20 +45,18 @@
 # # map <- ggplot() + geom_path(data = mapdat, aes(long, lat, group = group)) +
 # #   coord_map(xlim = c(-77.5, -69), ylim = c(36.5, 42))
 # 
-# dates <- seq(ymd('2014-03-30'), ymd('2014-08-04'), by = 'day')
+# dates <- seq(ymd('2014-03-30'), ymd('2014-10-09'), by = 'day')
 # max.freq <- max(anim.data$Freq)
 # 
 # # Map with no inset
-# saveGIF({
+# saveHTML({
 #   for (i in 1:length(dates)){
-#   plot <- map + geom_point(data = filter(anim.data, date.floor == dates[i], 
-#                                          lat >= 37.897, lat <= 39.356,
-#                                          long <= -75.626, long >= -77.371),
+#   plot <- map + geom_point(data = filter(anim.data, date.floor == dates[i]),
 #                       aes(x = long, y = lat, size = Freq), color = 'red') +
 #                    scale_size_area(limits = c(1,27), 
 #                                    breaks = c(1,2,3,seq(4,16,2),27),
 #                                    max_size = 20)+
-#                   annotate("text", x = -77, y = 39.25, size = 10,
+#                   annotate("text", x = -76, y = 42, size = 10,
 #                            label = dates[i], color = 'white') +
 #                   ggtitle('Striped Bass Detections') +
 #                   theme(legend.position = 'none',
@@ -74,7 +72,8 @@
 #     print(plot)
 #     ani.pause()
 #   }
-# }, interval = 0.5, outdir = 'p:/obrien/biotelemetry')
+#   }, interval = 0.5, verbose = F, nmax = length(dates), navigator = F,
+#   outdir = 'c:/users/secor lab/desktop/animation')
 # 
 # 
 # 
