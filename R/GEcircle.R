@@ -1,6 +1,31 @@
-# Code uses degree, minute, seconds to allow copy/paste from Google Earth. Make
-# sure the degree and prime symbols are removed before running (see example).
-# Radius should be in meters, but the code can be adjusted for different units.
+#' Create Google Earth circles around a Lat/Long point
+#' 
+#' \code{GEcircle} creates approximate circles in KML to be opened in Google
+#' Earth
+#' 
+#' This function uses degree, minute, second format of latitude/longitude points
+#' to allow copy/paste of points from Google Earth. Make sure the degree and
+#' prime symbols are removed and replaced with spaces before running, as in
+#' the example.
+#' 
+#' @param lat String. Vector of latitudes.
+#' @param long String. Vector of corresponding longitudes
+#' @param radius Numeric. Radius, of desired circle in meters.
+#' @param color Vector of any of the three kinds of R color specifications.
+#'    Determines the circle's color; value is passed onto
+#'    \code{\link[grDevices]{col2rgb}}.
+#' @param west Logical. Are the points in the western hemisphere? If values for
+#'    \code{long} are already negative, this should be \code{F}.
+#' @return This functions will write KML files to your working directory.
+#' @export
+#' @seealso \code{\link{ptcirc}}
+#' @examples
+#' buoys <- data.frame(rbind(c('38 19 1.71', '76 27 4.07'),
+#'                           c('38 18 40.44', '76 18 40.81'),
+#'                           c('38 18 56.44', '76 17 3.80'),
+#'                           c('38 18 27.13', '76 19 55.57')),
+#'                     stringsAsFactors = F)
+#' GEcircle(buoys[,1], buoys[,2], radius = 900, color = 'red', west = T)
 
 GEcircle <- function (lat, long, radius, color, west = T){
   DD <- function (x, western = F, long = F){
@@ -40,14 +65,3 @@ GEcircle <- function (lat, long, radius, color, west = T){
         file = paste0(names(paths)[i],'.kml'), append = T)
   }
 }
-
-
-## Example usage:
-# buoys <- data.frame(rbind(c('38 19 1.71', '76 27 4.07'),
-#                           c('38 18 40.44', '76 18 40.81'),
-#                           c('38 18 56.44', '76 17 3.80'),
-#                           c('38 18 27.13', '76 19 55.57')),
-#                     stringsAsFactors = F)
-# names(buoys) <- c('lat','long')
-# 
-# GEcircle(buoys$lat, buoys$long, 900, 'red')

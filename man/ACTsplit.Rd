@@ -7,14 +7,14 @@ ACTsplit(directory = getwd(), my.trans = NULL, false.det = NULL,
   write = TRUE, out = NULL, start = 20000101, end = Sys.Date())
 }
 \arguments{
-\item{directory}{String passed on to \code{vemsort}. Location of CSV data,
-which defaults to current wd.}
+\item{directory}{String passed on to \code{\link{vemsort}}. Location of CSV
+data, which defaults to current working directory.}
 
 \item{my.trans}{Numeric vector. Tag ID codes that you want removed prior
 to distribution.}
 
-\item{false.det}{Numeric vector passed on to \code{vemsort}. Contains tag ID
-codes of known false detections.}
+\item{false.det}{Numeric vector passed on to \code{\link{vemsort}}. Contains
+tag ID codes of known false detections.}
 
 \item{write}{Logical. Do you want to output CSV files? Useful if you are
 only looking for unidentified detections.}
@@ -33,10 +33,11 @@ Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
    will be found in your current working directory by default.
 }
 \description{
-\code{ACTsplit} filters all detections according to the researchers in ACT
+\code{ACTsplit} filters all detections according to the researchers in the
+\href{http://www.theactnetwork.com/}{ACT Network}
 }
 \details{
-This function uses \code{vemsort} to import detections, then matches
+This function uses \code{\link{vemsort}} to import detections, then matches
 these detections with transmitters submitted to ACT. It also allows a
 specified date range, removal of personal or private transmitters, and false
 detections.
@@ -46,5 +47,8 @@ ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 # Choose detections from April 1, 2014 up to and including August 1, 2014.
 ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
            start = 20140401, end = 20140801)
+}
+\seealso{
+\code{\link{vemsort}}
 }
 

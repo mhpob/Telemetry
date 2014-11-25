@@ -22,7 +22,7 @@ Output is a data frame with longitude, latitude, and "circle"
 }
 \details{
 The function was adopted from an answer on R-Help, 20061107, by Arien Lam
-https://stat.ethz.ch/pipermail/r-help/2006-November/116851.html
+\url{https://stat.ethz.ch/pipermail/r-help/2006-November/116851.html}.
 Each point is the place where you end up if you travel a certain distance
 along a great circle, which is uniquely defined by a point (your
 starting point) and an angle with the meridian at that point (your
@@ -31,5 +31,8 @@ direction).
 \examples{
 ptcirc(c(-75,37), 1609)
 ptcirc(data.frame(lon = c(-76,-80), lat = c(34,37)), 2000)
+}
+\seealso{
+\code{\link{GEcircle}}
 }
 

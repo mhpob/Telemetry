@@ -1,18 +1,19 @@
 #' Split detections into CSV files according to ACT database
 #'
-#' \code{ACTsplit} filters all detections according to the researchers in ACT
+#' \code{ACTsplit} filters all detections according to the researchers in the
+#' \href{http://www.theactnetwork.com/}{ACT Network}
 #' 
-#' This function uses \code{vemsort} to import detections, then matches
+#' This function uses \code{\link{vemsort}} to import detections, then matches
 #' these detections with transmitters submitted to ACT. It also allows a
 #' specified date range, removal of personal or private transmitters, and false
 #' detections.
 #' 
-#' @param directory String passed on to \code{vemsort}. Location of CSV data,
-#'    which defaults to current wd.
+#' @param directory String passed on to \code{\link{vemsort}}. Location of CSV
+#'    data, which defaults to current working directory.
 #' @param my.trans Numeric vector. Tag ID codes that you want removed prior
 #'    to distribution.
-#' @param false.det Numeric vector passed on to \code{vemsort}. Contains tag ID
-#'    codes of known false detections.
+#' @param false.det Numeric vector passed on to \code{\link{vemsort}}. Contains
+#'    tag ID codes of known false detections.
 #' @param write Logical. Do you want to output CSV files? Useful if you are
 #'    only looking for unidentified detections.
 #' @param out String. Where do you want the CSV files placed?
@@ -23,6 +24,7 @@
 #' @return Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
 #'    will be found in your current working directory by default.
+#' @seealso \code{\link{vemsort}}
 #' @export
 #' @examples
 #' ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
