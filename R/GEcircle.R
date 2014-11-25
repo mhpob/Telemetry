@@ -2,7 +2,7 @@
 # sure the degree and prime symbols are removed before running (see example).
 # Radius should be in meters, but the code can be adjusted for different units.
 
-GEcircles <- function (lat, long, radius, color, west = T){
+GEcircle <- function (lat, long, radius, color, west = T){
   DD <- function (x, western = F, long = F){
     d <- as.numeric(substr(x, 1, 2))
     m <- as.numeric(substr(x, 4, 5)) / 60
@@ -50,4 +50,4 @@ GEcircles <- function (lat, long, radius, color, west = T){
 #                     stringsAsFactors = F)
 # names(buoys) <- c('lat','long')
 # 
-# GEcircles(buoys$lat, buoys$long, 900, 'red')
+# GEcircle(buoys$lat, buoys$long, 900, 'red')
