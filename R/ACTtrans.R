@@ -6,7 +6,7 @@
 #' on a private Dropbox folder.
 #' 
 #' @author Lori Brown \email{east.coast.telemetry@@gmail.com}
-#' @format A data frame with 25 variables and an evolving number of rows
+#' @format A data frame with 26 variables and an evolving number of rows
 #' \describe{
 #'   \item{Tag.ID.Code.Standard}{Full transmitter code}
 #'   \item{ID.Standard}{Transmitter number (last digits of transmitter code)}
@@ -32,6 +32,7 @@
 #'   \item{Attachment.method}{How transmitter is attached (external, surgical
 #'     implant, etc.)}
 #'   \item{Comments}{Optional comments by researcher}
+#'   \item{Status}{Is the transmitter's status active, archived, or unknown?}
 #' }
 #' @source \url{http://www.theactnetwork.com/}
 "ACTtrans"
