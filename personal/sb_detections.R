@@ -69,4 +69,4 @@ secor.sb <- secor.sb %>%
   tbl_df()
 
 
-rm(tag.data, firsttagging.25465, secondtagging.25465)
+rm(detects, false, tag.data, firsttagging.25465, secondtagging.25465)
