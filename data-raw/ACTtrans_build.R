@@ -1,4 +1,4 @@
-active <- read.csv('data-raw/Active transmitters 12-4-14.csv', header = T,
+active <- read.csv('data-raw/Active transmitters 12-12-14.csv', header = T,
                      stringsAsFactors = F)
 active$Status <- 'Active'
 archived <- read.csv('data-raw/Archived transmitters 12-4-14.csv', header = T,
