@@ -70,9 +70,7 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
   
   if(write == TRUE){
     for(i in seq(length(j))){
-      j[[i]] <- j[[i]][c(1,3:7)]
-      j[[i]][7:10] <- NA
-      j[[i]] <- j[[i]][c(2, 3, 1, 7:10, 4:6)]
+      j[[i]] <- j[[i]][c(3:4, 1, 5:11)]
       names(j[[i]]) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
                     'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
                     'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')

@@ -50,20 +50,19 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                         header = T, stringsAsFactors = F)
   for (i in seq(1:length(detect.list))){
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
-                                 'drop1', 'drop2', 'drop3', 'drop4',
-                                 'station', 'lat', 'long')
+                                 'trans.name', 'trans.serial', 'sensor.value',
+                                 'sensor.unit', 'station', 'lat', 'long')
   }
   
   # Make list into data frame
   detects <- do.call(rbind.data.frame, detect.list)
-  # Drop emtpy columns
-  detects <- detects[,c(1:3, 8, 9:10)]
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = "America/New_York")
   # pull out transmitter ID Standard
-  detects$trans.num <- as.numeric(sapply(strsplit(detects[,3], '-'),'[[',3))
+  detects$trans.num <- as.numeric(sapply(
+    strsplit(detects[, 'transmitter'], '-'), '[[', 3))
 
   detects <- unique(dplyr::filter(detects, !transmitter %in% false.det))
   row.names(detects) <- NULL
