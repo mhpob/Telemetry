@@ -7,9 +7,9 @@
 GEcircle(lat, long, radius, color, west = T)
 }
 \arguments{
-\item{lat}{String. Vector of latitudes.}
+\item{lat}{String or Numeric. Vector of latitudes.}
 
-\item{long}{String. Vector of corresponding longitudes}
+\item{long}{String or Numeric. Vector of corresponding longitudes.}
 
 \item{radius}{Numeric. Radius, of desired circle in meters.}
 
@@ -28,10 +28,10 @@ This functions will write KML files to your working directory.
 Earth
 }
 \details{
-This function uses degree, minute, second format of latitude/longitude points
-to allow copy/paste of points from Google Earth. Make sure the degree and
-prime symbols are removed and replaced with spaces before running, as in
-the example.
+This function can use decimal degree or degree, minute, second format of
+latitude/longitude points to allow copy/paste of points from Google Earth.
+Make sure the degree and prime symbols are removed and replaced with spaces
+before running, as in the example.
 }
 \examples{
 buoys <- data.frame(rbind(c('38 19 1.71', '76 27 4.07'),

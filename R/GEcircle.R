@@ -3,13 +3,13 @@
 #' \code{GEcircle} creates approximate circles in KML to be opened in Google
 #' Earth
 #' 
-#' This function uses degree, minute, second format of latitude/longitude points
-#' to allow copy/paste of points from Google Earth. Make sure the degree and
-#' prime symbols are removed and replaced with spaces before running, as in
-#' the example.
+#' This function can use decimal degree or degree, minute, second format of
+#' latitude/longitude points to allow copy/paste of points from Google Earth.
+#' Make sure the degree and prime symbols are removed and replaced with spaces
+#' before running, as in the example.
 #' 
-#' @param lat String. Vector of latitudes.
-#' @param long String. Vector of corresponding longitudes
+#' @param lat String or Numeric. Vector of latitudes.
+#' @param long String or Numeric. Vector of corresponding longitudes.
 #' @param radius Numeric. Radius, of desired circle in meters.
 #' @param color Vector of any of the three kinds of R color specifications.
 #'    Determines the circle's color; value is passed onto
@@ -28,19 +28,21 @@
 #' GEcircle(buoys[,1], buoys[,2], radius = 900, color = 'red', west = T)
 
 GEcircle <- function (lat, long, radius, color, west = T){
-  DD <- function (x, western = F, long = F){
-    d <- as.numeric(substr(x, 1, 2))
-    m <- as.numeric(substr(x, 4, 5)) / 60
-    s <- as.numeric(substr(x, 7, 11)) / 3600
+  if(is.character(lat)){
+    DD <- function (x, western = F, is.long = F){
+      d <- as.numeric(substr(x, 1, 2))
+      m <- as.numeric(substr(x, 4, 5)) / 60
+      s <- as.numeric(substr(x, 7, 11)) / 3600
+      
+      if(western == T & is.long == T) -d - m - s
+      else d + m + s
+      }
     
-    if(western == T & long == T) -d - m - s
-    else d + m + s
+    lat <- DD(lat)
+    long <- DD(long, western = west, is.long = T)
   }
   
-  dmslat <- DD(lat) 
-  dmslong <- DD(long, western = west, long = T)
-  
-  paths <- TelemetryR::ptcirc(data.frame(cbind(dmslong, dmslat)), radius)
+  paths <- TelemetryR::ptcirc(data.frame(cbind(long, lat)), radius)
   paths <- split(paths, paths$circle)
   paths <- lapply(paths, function(x){x['circle'] <- 0; x})
   
@@ -54,7 +56,7 @@ GEcircle <- function (lat, long, radius, color, west = T){
   # Writes KML files to your working directory
   for(i in seq(1,length(paths))){
     cat(paste0('<?xml version="1.0" encoding="UTF-8"?> <kml xmlns="http://earth.google.com/kml/2.1"> <Placemark> <name>',
-               names(paths)[i],
+               paste(radius, 'm Radius Circle'),
                '</name> <Style> <geomColor>',
                circ.col,
                '</geomColor> </Style> <LineString> <coordinates>'),
