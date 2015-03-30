@@ -11,7 +11,7 @@
 #' Biology and Ecology 381: S161-S172.
 #' 
 #' Script was originally written on 20110803, last update on 20140702.
-#' Manipulated into R fuction on 20141003 by M. O'Brien 
+#' Manipulated into R fuction on 20150330 by M. O'Brien 
 #' \email{obrien@@umces.edu}.
 #' 
 #' @author Edwin Niklitschek \email{edwin.niklitschek@@ulagos.cl}
@@ -69,7 +69,7 @@
 #'    
 #' @param tl98fc Numeric. Lower temperature threshold where f_fc(T) >= 0.98.
 #'    Parameter of temperature portion of food consumption model. Defaults to
-#'    2.609.
+#'    26.09.
 #' @param tk1fc Numeric. Reaction rate multiplier at the lowest tested
 #'    temperature (6 C). Parameter of temperature portion of food consumption
 #'    model. Defaults to 0.195.
@@ -77,9 +77,9 @@
 #'    temperature (28 C). Parameter of temperature portion of food consumption
 #'    model. Defaults to 0.556.
 #'  
-#' @param S1 Numeric. Lowest tested salinity. Constant in the salintiy portion
+#' @param s1 Numeric. Lowest tested salinity. Constant in the salintiy portion
 #'    of the food consumption model. Defaults to 1.
-#' @param S4 Numeric. Highest tested salinity. Constant in the salinity portion
+#' @param s4 Numeric. Highest tested salinity. Constant in the salinity portion
 #'    of the food consumption model. Defaults to 29.  
 #' @param jfc Numeric. Size-dependent intercept for reaction rate at the lowest
 #'    salinity. Parameter of salinity portion of food consumption model.
@@ -131,9 +131,9 @@ sturgrow <- function(TEMP, SAL, DO, GR = 14, TL = NULL, CJ_OBS = 0, RATION = 1,
                      t1 = 6, t4 = 28, tk1rm = 0.141, tk4rm = 0.796,
                      b1 = -0.158, hrm = 0.268, irm = 0.352, smin = 9.166,
                      do1 = 25, grm = 0.748, crm = 1.0, drm = 1.048,
-                     arm = 0.522, brm = -0.17, ox = 13.55, tl98fc = 2.609,
+                     arm = 0.522, brm = -0.17, ox = 13.55, tl98fc = 26.09,
                      tk1fc = 0.195, tk4fc = 0.556, jfc = 0.359, kfc = 0.247,
-                     S1 = 1, S4 = 29, gfc = 0.733, dfc = 2.516, cfc = 1,
+                     s1 = 1, s4 = 29, gfc = 0.733, dfc = 2.516, cfc = 1,
                      afc = 1.028, bfc = -0.197, aeg = 0.335, ceg = -0.75,
                      deg = -0.62, geg = 0, aex = 0.055703, bex = -0.29,
                      cex = 0.0392, asda = 0.1657, aact = 0.29){
@@ -149,7 +149,7 @@ sturgrow <- function(TEMP, SAL, DO, GR = 14, TL = NULL, CJ_OBS = 0, RATION = 1,
 	FSrm <- FSArm * FSBrm / (1.0201)
   
   ## FO
-	DOCrm <- 100 * (1 - grm * exp(-FTrm * FSrm))
+	DOCrm <- 100 * (1 - crm * exp(-FTrm * FSrm))
 	KO1rm <- 1 - drm * exp(FTrm * FSrm - 1)
 	dorel <- (DOCrm - DO) / 100
 	SLrm <- (0.98 - KO1rm) / ((0.02 * (DOCrm - do1)) ^ crm)
@@ -174,12 +174,12 @@ sturgrow <- function(TEMP, SAL, DO, GR = 14, TL = NULL, CJ_OBS = 0, RATION = 1,
 	CKS1 <- jfc * GR ^ -b1
 	CKS4 <- kfc * GR ^ -b1
 
-	YA <- (1 / (smin - S1)) * log(0.98 * (1 - CKS1) / (CKS1 * 0.02))
-	EYA <- exp(YA * (SAL - S1))
+	YA <- (1 / (smin - s1)) * log(0.98 * (1 - CKS1) / (CKS1 * 0.02))
+	EYA <- exp(YA * (SAL - s1))
   KSA <- CKS1 * EYA / (1 + CKS1 * (EYA - 1))
 
-	YB <- (1 / (S4 - smin)) * log(0.98 * (1 - CKS4) / (CKS4 * 0.02))
-	EYB <- exp(YB * (S4 - SAL))
+	YB <- (1 / (s4 - smin)) * log(0.98 * (1 - CKS4) / (CKS4 * 0.02))
+	EYB <- exp(YB * (s4 - SAL))
   KSB <- CKS4 * EYB / (1 + CKS4 * (EYB - 1))
 	FSfc <- (KSA * KSB) / (1) 
   

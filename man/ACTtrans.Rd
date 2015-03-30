@@ -3,7 +3,7 @@
 \docType{data}
 \name{ACTtrans}
 \alias{ACTtrans}
-\title{Active transmitters from A.C.T., Updated 2015-01-23}
+\title{Active transmitters from A.C.T., Updated 2015-03-24}
 \format{A data frame with 26 variables and an evolving number of rows
 \describe{
   \item{Tag.ID.Code.Standard}{Full transmitter code}

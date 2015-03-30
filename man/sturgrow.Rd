@@ -8,8 +8,8 @@ sturgrow(TEMP, SAL, DO, GR = 14, TL = NULL, CJ_OBS = 0, RATION = 1,
   t1 = 6, t4 = 28, tk1rm = 0.141, tk4rm = 0.796, b1 = -0.158,
   hrm = 0.268, irm = 0.352, smin = 9.166, do1 = 25, grm = 0.748,
   crm = 1, drm = 1.048, arm = 0.522, brm = -0.17, ox = 13.55,
-  tl98fc = 2.609, tk1fc = 0.195, tk4fc = 0.556, jfc = 0.359,
-  kfc = 0.247, S1 = 1, S4 = 29, gfc = 0.733, dfc = 2.516, cfc = 1,
+  tl98fc = 26.09, tk1fc = 0.195, tk4fc = 0.556, jfc = 0.359,
+  kfc = 0.247, s1 = 1, s4 = 29, gfc = 0.733, dfc = 2.516, cfc = 1,
   afc = 1.028, bfc = -0.197, aeg = 0.335, ceg = -0.75, deg = -0.62,
   geg = 0, aex = 0.055703, bex = -0.29, cex = 0.0392, asda = 0.1657,
   aact = 0.29)
@@ -85,7 +85,7 @@ routine metabolism model. Defaults to 0.522.}
 
 \item{tl98fc}{Numeric. Lower temperature threshold where f_fc(T) >= 0.98.
 Parameter of temperature portion of food consumption model. Defaults to
-2.609.}
+26.09.}
 
 \item{tk1fc}{Numeric. Reaction rate multiplier at the lowest tested
 temperature (6 C). Parameter of temperature portion of food consumption
@@ -103,10 +103,10 @@ Defaults to 0.359.}
    highest salinity. Parameter of salinity portion of food consumption
    model. Defaults to 0.247.}
 
-\item{S1}{Numeric. Lowest tested salinity. Constant in the salintiy portion
+\item{s1}{Numeric. Lowest tested salinity. Constant in the salintiy portion
 of the food consumption model. Defaults to 1.}
 
-\item{S4}{Numeric. Highest tested salinity. Constant in the salinity portion
+\item{s4}{Numeric. Highest tested salinity. Constant in the salinity portion
 of the food consumption model. Defaults to 29.}
 
 \item{gfc}{Numeric. Proportionality constant for DOC_fc. Parameter of
@@ -169,7 +169,7 @@ waters: II. Model development and testing. Journal of Experimental Marine
 Biology and Ecology 381: S161-S172.
 
 Script was originally written on 20110803, last update on 20140702.
-Manipulated into R fuction on 20141003 by M. O'Brien
+Manipulated into R fuction on 20150330 by M. O'Brien
 \email{obrien@umces.edu}.
 }
 \author{
