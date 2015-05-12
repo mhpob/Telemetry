@@ -1,4 +1,4 @@
-#' Active transmitters from A.C.T., Updated 2015-04-15
+#' Active transmitters from A.C.T., Updated 2015-05-08
 #' 
 #' Active VEMCO transmitters as determined by predicted battery life.
 #' Transmitters are submitted to the Atlantic Cooperative Telemetry Network
