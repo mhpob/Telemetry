@@ -1,12 +1,6 @@
 library(gdistance); library(rgdal); library(dplyr)
 library(geoR); library(SpatialTools)
 
-### Data Entry -----------------------------------------------------------------
-## Shapefile, reproject from meters to kilometers
-chesapeake <- readOGR('c:/users/secor lab/desktop/gis products/erin',
-                'reporting_regions_new')
-chesapeake <- spTransform(chesapeake,
-                          CRS('+proj=utm +zone=18 +datum=NAD83 +units=km'))
 # test.data <- read.csv('c:/users/secor lab/downloads/2005_spring_seasonal_water quality data_cbp.csv')
 # coordinates <- test.data[,c(2,1)]
 # data <- test.data$SALINITY
