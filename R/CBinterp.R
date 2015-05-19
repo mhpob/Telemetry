@@ -1,9 +1,31 @@
 #' Interpolate variables over the Chesapeake Bay
 #'
+#' \code{CBinterp} interpolates Lat-Long georeferenced data across the surface
+#' of the Chesapeake.
 #'
+#' This function converts long-lat data to UTM-referenced data, interpolates
+#' across a grid of the required resolution, and returns the interpolated values
+#' as long-lat-referenced data.
 #'
+#' @param data Data frame or Numeric. Vector of water quality values.
+#' @param coordinates Numeric. Vector of Long/Lat locations of provided data.
+#' @param res Numeric. Resolution of the desired interpolated values in
+#'    kilometers.
+#' @return This function returns an object of class \code{SpatialPointsDataFrame}.
+#'    Data slot contains columns of longitude, latitude, interpolated value at
+#'    that location, and the standard error of the interpolated value.
+#' @seealso \code{\link{chesapeake}}
+#' @export
+#' @examples
+#' coords <- matrix(c(seq(-77.4, -75.5, length.out = 1000),
+#'                         seq(36.7, 39.4, length.out = 1000)), ncol = 2)
+#' coords <- apply(coords, 2, sample, size = 100)
+#' fake.data <- rnorm(100, 15, 2)
+#' resolution <- 2
+#' interpolated <- CBinterp(data = fake.data, coordinates = coords,
+#'                          res = resolution)
 
-CBinterp <- function(data, coordinates, res){
+CBinterp <- function(data, coordinates, res = 2){
   if(is.data.frame(data) == F) data <- as.data.frame(data)
 
   water_qual <- sp::SpatialPointsDataFrame(coords = coordinates,
@@ -62,7 +84,7 @@ CBinterp <- function(data, coordinates, res){
   op.dist <- as.matrix(op.dist, diag = TRUE, upper = TRUE)
 
 
-  # Fit geostatistical model for the temp data
+  # Fit geostatistical model for the data
   vg <- geoR::variog(coords = water_qual@data[, c('reasting','rnorthing')],
                  data = water_qual@data[, c('reasting','rnorthing', 'median')],
                  max.dis = 600, dists.mat = dist)
