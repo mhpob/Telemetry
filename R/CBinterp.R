@@ -26,6 +26,7 @@
 #'                          res = resolution)
 
 CBinterp <- function(data, coordinates, res = 2){
+  pb <- txtProgressBar(max = 8, style = 3)
   if(is.data.frame(data) == F) data <- as.data.frame(data)
 
   water_qual <- sp::SpatialPointsDataFrame(coords = coordinates,
@@ -40,6 +41,8 @@ CBinterp <- function(data, coordinates, res = 2){
     dplyr::summarize(median = median(data)) %>%
     as.data.frame()
   water_qual@coords <- as.matrix(water_qual@data[, c('reasting','rnorthing')])
+
+  setTxtProgressBar(pb, 1)
 
   # Make grid to interpolate over, make into spatial object with same
   # projection as shapefile. Use SpatialPixels to more-easily convert to
@@ -66,6 +69,8 @@ CBinterp <- function(data, coordinates, res = 2){
   ## Create a raster of data
   ches.ras <- raster::raster(grid, layer = 1)
 
+  setTxtProgressBar(pb, 2)
+
   ## Create transition matrix that represets a pairwise product of
   ## cells' conductance
   ches.trans <- gdistance::transition(ches.ras, function(x) x[1] * x[2], 8)
@@ -74,15 +79,20 @@ CBinterp <- function(data, coordinates, res = 2){
   dist <- gdistance::costDistance(ches.trans, water_qual)
   dist <- as.matrix(as.dist(dist, diag = T, upper = T))
 
+  setTxtProgressBar(pb, 3)
+
   ## Interpolation steps
   # Use transition matrix to calculate corrected distances (as the fish swim)
   pred.dist <- gdistance::costDistance(ches.trans, grid_water)
   pred.dist <- as.matrix(as.dist(pred.dist, diag = TRUE, upper = TRUE))
 
+  setTxtProgressBar(pb, 4)
+
   # Calculate distances between observed and predicted values
   op.dist <- gdistance::costDistance(ches.trans, water_qual, grid_water)
   op.dist <- as.matrix(op.dist, diag = TRUE, upper = TRUE)
 
+  setTxtProgressBar(pb, 5)
 
   # Fit geostatistical model for the data
   vg <- geoR::variog(coords = water_qual@data[, c('reasting','rnorthing')],
@@ -105,16 +115,23 @@ CBinterp <- function(data, coordinates, res = 2){
                pcoords = as.matrix(grid_water@data[,1:2]),
                D = dist, Dp = pred.dist, Dop = op.dist)
 
+  setTxtProgressBar(pb, 6)
+
   # Apply spatial structure nd model to predict values
   krige <- SpatialTools::krige.uk(water_qual@data[, 'median'],
                     V = V0$V, Vop = V0$Vop, Vp = V0$Vp,
                     X = as.matrix(cbind(1,
                               water_qual@data[, c('reasting','rnorthing')])),
                     Xp = as.matrix(cbind(1, grid_water@data[,1:2])), nsim = 0)
+
+  setTxtProgressBar(pb, 7)
+
   grid_water[['value']] <- krige$pred
   grid_water[['se']] <- krige$mspe
   grid_water <- sp::spTransform(grid_water, sp::CRS('+proj=longlat'))
   grid_water@data <- cbind(grid_water@coords,
                            grid_water@data[, c('value', 'se')])
+  setTxtProgressBar(pb, 8)
+  close(pb)
   grid_water
 }
