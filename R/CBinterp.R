@@ -62,7 +62,7 @@ CBinterp <- function(data, coordinates, res = 2){
   # Label whether the points are within water, make it harder to interpolate over
   # land (i.e., conductance of near-0 (land) v near-1 (water)).
   grid@data <- grid@data %>%
-    dplyr::left_join(grid_water@data) %>%
+    dplyr::left_join(grid_water@data, by = c('Var1', 'Var2')) %>%
     dplyr::mutate(water = ifelse(is.na(water), 'NO', water),
                   cond = ifelse(water == 'NO', 0.01, 0.99)) %>%
     dplyr::select(cond)
@@ -97,14 +97,16 @@ CBinterp <- function(data, coordinates, res = 2){
   # Fit geostatistical model for the data
   vg <- geoR::variog(coords = water_qual@data[, c('reasting','rnorthing')],
                  data = water_qual@data[, c('reasting','rnorthing', 'median')],
-                 max.dis = 600, dists.mat = dist)
+                 max.dis = 600, dists.mat = dist, messages = F)
   # ML fit
+  invisible(capture.output(
   vpar <- SpatialTools::maxlik.cov.sp(as.matrix(cbind(1,
               water_qual@data[, c('reasting','rnorthing')])),
               water_qual@data[, 'median'],
               coords = as.matrix(water_qual@data[, c('reasting','rnorthing')]),
               sp.type = "matern", range.par = 600, error.ratio = 0.5,
               D = dist, reml = T)
+  ))
 
   # Define spatial structure of prediction matrix from fitted spatial model
   V0 <- SpatialTools::cov.sp(coords = as.matrix(
@@ -128,7 +130,9 @@ CBinterp <- function(data, coordinates, res = 2){
 
   grid_water[['value']] <- krige$pred
   grid_water[['se']] <- krige$mspe
+  suppressWarnings(
   grid_water <- sp::spTransform(grid_water, sp::CRS('+proj=longlat'))
+  )
   grid_water@data <- cbind(grid_water@coords,
                            grid_water@data[, c('value', 'se')])
   setTxtProgressBar(pb, 8)
