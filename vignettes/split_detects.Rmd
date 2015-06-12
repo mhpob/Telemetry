@@ -41,7 +41,7 @@ library(TelemetryR)
 vemsort('p:/obrien/biotelemetry/detections')
 ```
 
-I can also put in a vector of false detections that I've gotten confirmed by VEMCO. Note the difference in the length of the data frame:
+I can also put in a vector of false detections that I've gotten confirmed by VEMCO. The function originally removed these detections, but I got nervous that a legitimate fish happening to share a tag that was false on one transmitter may show up on another. Now, this just inserts a `FALSE` flag so a manual decision can be made later. Note the addition of a "flag" column:
 
 ```{r}
 vemsort('p:/obrien/biotelemetry/detections', c('A69-1601-37119','A69-1601-64288'))
