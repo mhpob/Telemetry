@@ -1,23 +1,23 @@
 #' Prepare VEMCO transmitter CSV files for analysis
-#' 
+#'
 #' \code{vemsort} finds and combines all VEMCO CSV files in a directory
-#' 
+#'
 #' This function assumes that all necessary CSV files are within the specified
 #' directory or subdirectories within. All files must have the default headings
 #' offloaded by VEMCO products. These are, in order:
 #' Date and Time (UTC), Receiver, Transmitter, Transmitter Name,
 #' Transmitter Serial, Sensor Value, Sensor Unit, Station Name,
 #' Latitude, Longitude.
-#' 
+#'
 #' @param directory String. Location of CSV data, defaults to current wd.
 #' @param false.det Numeric vector. Contains tag ID codes of known
-#'    false detections.
+#'    false detections to produce flags.
 #' @return Output is a dplyr table data frame containing all detections from
 #'    the directory's CSV files
 #' @export
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
-#' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs', 
+#' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
 #'          c('37119', '64288'))
 
 vemsort <- function(directory = getwd(), false.det = NULL) {
@@ -26,7 +26,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   files <- paste(directory, files, sep = '/')
   # Pull out sub-folders within the "detections" folder
   folders <- files[file.info(files)$isdir]
-  
+
   # Create file paths for all files ending in ".csv" within the sub-folders
   file.locs1 <- NULL
   file.locs2 <- NULL
@@ -44,7 +44,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                         list.files(path = directory, pattern = '*.csv'),
                         sep = '/')
   }
-  
+
   # Read in files located by the steps above and rename columns
   detect.list <- lapply(file.locs2, FUN = read.csv,
                         header = T, stringsAsFactors = F)
@@ -53,7 +53,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                                  'trans.name', 'trans.serial', 'sensor.value',
                                  'sensor.unit', 'station', 'lat', 'long')
   }
-  
+
   # Make list into data frame
   detects <- do.call(rbind.data.frame, detect.list)
   # Convert UTC to EST/EDT
@@ -64,8 +64,14 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   detects$trans.num <- as.numeric(sapply(
     strsplit(detects[, 'transmitter'], '-'), '[[', 3))
 
-  detects <- unique(dplyr::filter(detects, !transmitter %in% false.det))
+  if(is.null(false.det)){
+    detects <- unique(detects)
+  } else{
+    detects <- unique(dplyr::mutate(detects,
+                                    flag = !transmitter %in% false.det))
+  }
+
   row.names(detects) <- NULL
-  
+
   dplyr::tbl_df(detects)
 }
