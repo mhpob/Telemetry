@@ -2,12 +2,12 @@
 #'
 #' \code{ACTsplit} filters all detections according to the researchers in the
 #' \href{http://www.theactnetwork.com/}{ACT Network}
-#' 
+#'
 #' This function uses \code{\link{vemsort}} to import detections, then matches
 #' these detections with transmitters submitted to ACT. It also allows a
 #' specified date range, removal of personal or private transmitters, and false
 #' detections.
-#' 
+#'
 #' @param directory String passed on to \code{\link{vemsort}}. Location of CSV
 #'    data, which defaults to current working directory.
 #' @param my.trans Numeric vector. Tag ID codes that you want removed prior
@@ -35,39 +35,44 @@
 ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
                      write = TRUE, out = NULL,
                      start = 20000101, end = Sys.Date()){
-  
+
   detects <- if(is.data.frame(directory)){
     directory
     } else{
       vemsort(directory, false.det)
     }
-  
+
   # Filter for date range
   stdate <- lubridate::ymd(start, tz = 'America/New_York')
   enddate <- lubridate::ymd(end, tz = 'America/New_York')
-  
+
   detects <- dplyr::filter(detects,
                            lubridate::floor_date(date.local, "day") >= stdate &
                            lubridate::floor_date(date.local, "day") <= enddate)
-  
+
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
                       !Tag.ID.Code.Standard %in% my.trans)
-  
+
   id <- merge(detects, id[, c(1:2, 14:15)],
               by.x = c('transmitter', 'trans.num'),
               by.y = c('Tag.ID.Code.Standard', 'ID.Standard'))
-  
+
+  flag.id <- id[id$flag == F,]
+  id <- id[id$flag == T,]
+
   unid <- dplyr::filter(detects,
                         transmitter %in% setdiff(detects$transmitter,
-                                                 ACTtrans$Tag.ID.Code.Standard))
-  
+                                                 ACTtrans$Tag.ID.Code.Standard),
+                        flag == T)
+
+
   j <- split(id, id$Primary.Researcher)
-  
+
   csv.root <- ifelse(!is.null(out), out,
                      ifelse(is.data.frame(directory),
                             getwd(), directory))
-  
+
   if(write == TRUE){
     for(i in seq(length(j))){
       j[[i]] <- j[[i]][c(3:4, 1, 5:11)]
@@ -81,10 +86,6 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
                 row.names = F)
     }
   }
-  
-  if(dim(unid)[1] == 0){
-    message('There were no unidentified detections!')
-  } else{
-    unid
-  }
+
+  list(UNID = unid, ID_flag = flag.id)
 }
