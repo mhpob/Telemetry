@@ -3,7 +3,7 @@
 \docType{data}
 \name{ACTtrans}
 \alias{ACTtrans}
-\title{Active transmitters from A.C.T., Updated 2015-05-08}
+\title{Transmitters from A.C.T., Updated 2015-06-16}
 \format{A data frame with 26 variables and an evolving number of rows
 \describe{
   \item{Tag.ID.Code.Standard}{Full transmitter code}
@@ -18,6 +18,7 @@
   \item{Tag.Family}{Style/type of tag, or manufaturer if not VEMCO}
   \item{Tag.Type}{Is the tag standard, or does it provide other environmental
     data?}
+  \item{Channel}{Transmitter channel (first portion of transmitter code)}
   \item{Primary.Tagging.Organization}{Organization who attached transmitter}
   \item{Primary.Researcher}{Main point of contact for detections}
   \item{Collaborators}{Auxiliary points of contact for detections}
@@ -30,7 +31,7 @@
   \item{Attachment.method}{How transmitter is attached (external, surgical
     implant, etc.)}
   \item{Comments}{Optional comments by researcher}
-  \item{Status}{Is the transmitter's status active, archived, or unknown?}
+  \item{Array.Affiliation}{ACT or FACT affiliation}
 }}
 \source{
 \url{http://www.theactnetwork.com/}
@@ -39,7 +40,6 @@
 data(ACTtrans)
 }
 \description{
-Active VEMCO transmitters as determined by predicted battery life.
 Transmitters are submitted to the Atlantic Cooperative Telemetry Network
 (\url{http://www.theactnetwork.com/}) by individual researchers and archived
 on a private Dropbox folder.

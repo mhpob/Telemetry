@@ -10,7 +10,7 @@ vemsort(directory = getwd(), false.det = NULL)
 \item{directory}{String. Location of CSV data, defaults to current wd.}
 
 \item{false.det}{Numeric vector. Contains tag ID codes of known
-false detections.}
+false detections to produce flags.}
 }
 \value{
 Output is a dplyr table data frame containing all detections from
