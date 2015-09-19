@@ -7,7 +7,7 @@
 NULL
 
 
-#' Transmitters from A.C.T., Updated 2015-07-22
+#' Transmitters from A.C.T., Updated 2015-09-09
 #'
 #' Transmitters are submitted to the Atlantic Cooperative Telemetry Network
 #' (\url{http://www.theactnetwork.com/}) by individual researchers and archived
