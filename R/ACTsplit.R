@@ -54,7 +54,7 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
                       !Tag.ID.Code.Standard %in% my.trans)
 
-  id <- merge(detects, id[, c(1:2, 14:15)],
+  id <- merge(detects, id[, c(1:2, 13:14)],
               by.x = c('transmitter', 'trans.num'),
               by.y = c('Tag.ID.Code.Standard', 'ID.Standard'))
 

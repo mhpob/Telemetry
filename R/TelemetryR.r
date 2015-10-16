@@ -14,7 +14,7 @@ NULL
 #' on a private Dropbox folder.
 #'
 #' @author Lori Brown \email{east.coast.telemetry@@gmail.com}
-#' @format A data frame with 26 variables and an evolving number of rows
+#' @format A data frame with 25 variables and an evolving number of rows
 #' \describe{
 #'   \item{Tag.ID.Code.Standard}{Full transmitter code}
 #'   \item{ID.Standard}{Transmitter number (last digits of transmitter code)}
@@ -28,7 +28,6 @@ NULL
 #'   \item{Tag.Family}{Style/type of tag, or manufaturer if not VEMCO}
 #'   \item{Tag.Type}{Is the tag standard, or does it provide other environmental
 #'     data?}
-#'   \item{Channel}{Transmitter channel (first portion of transmitter code)}
 #'   \item{Primary.Tagging.Organization}{Organization who attached transmitter}
 #'   \item{Primary.Researcher}{Main point of contact for detections}
 #'   \item{Collaborators}{Auxiliary points of contact for detections}
