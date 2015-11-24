@@ -1,7 +1,11 @@
-ACTtrans <- read.csv('data-raw/all transmitters 11-6-15.csv',
+ACTtrans <- read.csv('data-raw/all transmitters 11-23-15.csv',
                      stringsAsFactors = F)
 
 devtools::use_data(ACTtrans, overwrite = T)
+
+# Remember to change the documentation in R>TelemetryR.r and
+# run devtools::document()
+
 
 # On June 16, ACT prepared a combined document. Keeping this code here in case
 # this doesn't happen in the future.
