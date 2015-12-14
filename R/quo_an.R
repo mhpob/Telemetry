@@ -1,15 +1,26 @@
 data <- read.csv('p:/obrien/biotelemetry/csi/listening/activedata.csv',
                  stringsAsFactors = F)
 
-data <- data[data$Type == 'B', c('Temp', 'Detections')]
+env <- data[data$Type == 'B', 'Temp']
+det <- data[data$Type == 'B', 'Detections']
+bin_width <- 1
 
-data$qabins <- cut(data$Temp, seq(12,31,1))
+quo_an <- function(env, det, bin_width = 1){
+  # Create grouping claesses
+  classes <- cut(env, seq(floor(range(env)[1]),
+                         ceiling(range(env)[2]),
+                         bin_width))
 
-fish <- aggregate(data$Detections ~ data$qabins, FUN = sum)
-site <- aggregate(data$Temp ~ data$qabins, FUN = length)
+  # Aggregate by grouping classes.
+  fish <- aggregate(det ~ classes, FUN = sum)
+  station <- aggregate(env ~ classes, FUN = length)
 
-d2 <- merge(fish, site)
+  q_an <- merge(fish, station)
 
-d2$pse <- d2$'data$Temp'/sum(d2$'data$Temp')
-d2$pme <- d2$'data$Detections'/sum(d2$'data$Detections')
-d2$qe <- d2$pme/d2$pse
+  q_an$pse <- q_an$env/sum(q_an$env)
+  q_an$pme <- q_an$det/sum(q_an$det)
+
+  q_an$qe <- q_an$pme/q_an$pse
+
+  q_an
+}
