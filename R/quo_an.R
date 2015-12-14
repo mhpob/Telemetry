@@ -43,10 +43,19 @@
 
 
 quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
+  # Create breaks, allowing for very small values.
+  lims <- NULL
+  lims[1] <- ifelse(abs(min(wq, na.rm = T)) < 1,
+                    min(wq, na.rm = T) - abs(min(wq, na.rm = T)) / 5,
+                    floor(min(wq, na.rm = T)))
+  lims[2] <- ifelse(abs(max(wq, na.rm = T)) < 1,
+                    max(wq, na.rm = T) + abs(max(wq, na.rm = T)) / 5,
+                    ceiling(max(wq, na.rm = T)))
+  brks <- seq(lims[1], lims[2], bin_width)
+  brks <- if(lims[2] > max(brks)) c(brks, max(brks) + bin_width) else brks
+
   # Create grouping classes.
-  classes <- cut(wq, seq(floor(range(wq)[1]),
-                         ceiling(range(wq)[2]),
-                         bin_width))
+  classes <- cut(wq, brks)
 
   # Aggregate by wqironmental classes.
   if(pres_abs == T){
