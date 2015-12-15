@@ -56,21 +56,21 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
   brks <- seq(lims[1], lims[2], bin_width)
   brks <- if(lims[2] > max(brks)) c(brks, max(brks) + bin_width) else brks
 
-  # Create grouping classes.
-  classes <- cut(wq, brks)
+  # Create grouping bins.
+  bins <- cut(wq, brks)
 
-  # Aggregate by wqironmental classes.
+  # Aggregate by environmental bins.
   if(pres_abs == T){
     # Presence/Absence
-    fish <- data.frame(det, classes)
+    fish <- data.frame(det, bins)
     fish <- fish[det > 0,]
-    fish <- aggregate(det ~ classes, data = fish, FUN = length)
+    fish <- aggregate(det ~ bins, data = fish, FUN = length)
   } else{
     # Incidence
-    fish <- aggregate(det ~ classes, FUN = sum)
+    fish <- aggregate(det ~ bins, FUN = sum)
   }
 
-  station <- aggregate(wq ~ classes, FUN = length)
+  station <- aggregate(wq ~ bins, FUN = length)
 
   q_an <- merge(fish, station, all = T)
   q_an[is.na(q_an)] <- 0
