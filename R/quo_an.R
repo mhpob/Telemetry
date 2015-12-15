@@ -43,17 +43,11 @@
 
 
 quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
-  # Create breaks, allowing for very small values.
+  # Create breaks.
   minval <- min(wq, na.rm = T)
   maxval <- max(wq, na.rm = T)
-  lims <- NULL
-  lims[1] <- ifelse(abs(minval) < 1,
-                    minval - abs(minval) / 5,
-                    floor(minval))
-  lims[2] <- ifelse(abs(maxval) < 1,
-                    maxval + abs(minval) / 5,
-                    ceiling(maxval))
-  brks <- seq(lims[1], lims[2], bin_width)
+
+  brks <- seq(minval, maxval, bin_width)
   brks <- if(maxval > max(brks)) c(brks, max(brks) + bin_width) else brks
 
   # Create grouping bins.
@@ -72,15 +66,18 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
 
   station <- aggregate(wq ~ bins, FUN = length)
 
-  q_an <- merge(data.frame(bins = levels(bins)), fish, all = T)
-  q_an <- merge(q_an, station, all = T)
+  q_an <- merge(data.frame(bins = factor(levels(bins),
+                                         levels = levels(bins))),
+                fish, all = T)
+  q_an <- merge(station, q_an,all = T, sort = F)
   q_an[is.na(q_an)] <- 0
+  q_an <- q_an[, c(1, 3, 2)]
 
   q_an$pme <- q_an$det/sum(q_an$det)
   q_an$pse <- q_an$wq/sum(q_an$wq)
 
   q_an$qe <- q_an$pme/q_an$pse
 
-  names(q_an) <- c('bin', 'detections', 'water.quality', 'pMe', 'pSe', 'Qe')
+  names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe', 'Qe')
   q_an
 }
