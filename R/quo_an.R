@@ -66,17 +66,20 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
 
   station <- aggregate(wq ~ bins, FUN = length)
 
-  q_an <- merge(data.frame(bins = factor(levels(bins),
-                                         levels = levels(bins))),
+  # Merge data and correctly order bins.
+  q_an <- merge(data.frame(bins = levels(bins)),
                 fish, all = T)
-  q_an <- merge(station, q_an,all = T, sort = F)
+  q_an <- merge(q_an, station, all = T)
+  q_an$bins <- factor(levels(q_an$bins), levels = levels(bins))
+  q_an <- q_an[order(q_an$bins),]
+  row.names(q_an) <- NULL
   q_an[is.na(q_an)] <- 0
-  q_an <- q_an[, c(1, 3, 2)]
+  
+  # Quotient analysis
+  q_an$pme <- q_an$det / sum(q_an$det)
+  q_an$pse <- q_an$wq / sum(q_an$wq)
 
-  q_an$pme <- q_an$det/sum(q_an$det)
-  q_an$pse <- q_an$wq/sum(q_an$wq)
-
-  q_an$qe <- q_an$pme/q_an$pse
+  q_an$qe <- q_an$pme / q_an$pse
 
   names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe', 'Qe')
   q_an
