@@ -44,13 +44,15 @@
 
 quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
   # Create breaks, allowing for very small values.
+  minval <- min(wq, na.rm = T)
+  maxval <- max(wq, na.rm = T)
   lims <- NULL
-  lims[1] <- ifelse(abs(min(wq, na.rm = T)) < 1,
-                    min(wq, na.rm = T) - abs(min(wq, na.rm = T)) / 5,
-                    floor(min(wq, na.rm = T)))
-  lims[2] <- ifelse(abs(max(wq, na.rm = T)) < 1,
-                    max(wq, na.rm = T) + abs(max(wq, na.rm = T)) / 5,
-                    ceiling(max(wq, na.rm = T)))
+  lims[1] <- ifelse(abs(minval) < 1,
+                    minval - abs(minval) / 5,
+                    floor(minval))
+  lims[2] <- ifelse(abs(maxval) < 1,
+                    maxval + abs(minval) / 5,
+                    ceiling(maxval))
   brks <- seq(lims[1], lims[2], bin_width)
   brks <- if(lims[2] > max(brks)) c(brks, max(brks) + bin_width) else brks
 
