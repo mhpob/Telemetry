@@ -54,7 +54,6 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
                     maxval + abs(minval) / 5,
                     ceiling(maxval))
   brks <- seq(lims[1], lims[2], bin_width)
-  brks <- if(lims[2] > max(brks)) c(brks, max(brks) + bin_width) else brks
 
   # Create grouping bins.
   bins <- cut(wq, brks)
@@ -72,7 +71,8 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
 
   station <- aggregate(wq ~ bins, FUN = length)
 
-  q_an <- merge(fish, station, all = T)
+  q_an <- merge(data.frame(bins = levels(bins)), fish, all = T)
+  q_an <- merge(q_an, station, all = T)
   q_an[is.na(q_an)] <- 0
 
   q_an$pme <- q_an$det/sum(q_an$det)
