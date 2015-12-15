@@ -54,6 +54,7 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
                     maxval + abs(minval) / 5,
                     ceiling(maxval))
   brks <- seq(lims[1], lims[2], bin_width)
+  brks <- if(maxval > max(brks)) c(brks, max(brks) + bin_width) else brks
 
   # Create grouping bins.
   bins <- cut(wq, brks)
