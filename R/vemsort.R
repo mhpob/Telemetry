@@ -26,8 +26,9 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                       recursive = T)
 
   # Read in files and rename columns
-  detect.list <- lapply(files, FUN = read.csv,
+  detect.list <- lapply(files, FUN = data.table::fread,
                         stringsAsFactors = F)
+
   for (i in seq(1:length(detect.list))){
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
                                  'trans.name', 'trans.serial', 'sensor.value',
@@ -35,7 +36,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   }
 
   # Make list into data frame
-  detects <- do.call(rbind.data.frame, detect.list)
+  detects <- do.call(rbind, detect.list)
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
