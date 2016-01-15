@@ -12,7 +12,7 @@
 #' @param directory String. Location of CSV data, defaults to current wd.
 #' @param false.det Numeric vector. Contains tag ID codes of known
 #'    false detections to produce flags.
-#' @return Output is a dplyr table data frame containing all detections from
+#' @return Output is a data.table containing all detections from
 #'    the directory's CSV files
 #' @export
 #' @examples
@@ -26,8 +26,8 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                       recursive = T)
 
   # Read in files and rename columns
-  detect.list <- lapply(files, FUN = data.table::fread,
-                        stringsAsFactors = F)
+  detect.list <- suppressWarnings(lapply(files, FUN = data.table::fread,
+                        stringsAsFactors = F))
 
   for (i in seq(1:length(detect.list))){
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
@@ -42,17 +42,15 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = "America/New_York")
   # pull out transmitter ID Standard
-  detects$trans.num <- as.numeric(sapply(
-    strsplit(detects[, 'transmitter'], '-'), '[[', 3))
+  detects <- detects[, trans.num := sapply(strsplit(transmitter, '-'), '[[', 3)]
 
   if(is.null(false.det)){
     detects <- unique(detects)
   } else{
-    detects <- unique(dplyr::mutate(detects,
-                                    flag = !transmitter %in% false.det))
+    detects <- unique(detects[, flag := !transmitter %in% false.det])
   }
 
   row.names(detects) <- NULL
 
-  dplyr::tbl_df(detects)
+  detects
 }
