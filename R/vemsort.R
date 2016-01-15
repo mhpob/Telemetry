@@ -21,33 +21,13 @@
 #'          c('37119', '64288'))
 
 vemsort <- function(directory = getwd(), false.det = NULL) {
-  # List all files within the "detections" folder
-  files <- list.files(path = directory)
-  files <- paste(directory, files, sep = '/')
-  # Pull out sub-folders within the "detections" folder
-  folders <- files[file.info(files)$isdir]
+  # List all files within the provided directory
+  files <- list.files(path = directory, pattern = '*.csv', full.names = T,
+                      recursive = T)
 
-  # Create file paths for all files ending in ".csv" within the sub-folders
-  file.locs1 <- NULL
-  file.locs2 <- NULL
-  if(length(folders) > 0L){
-    for (i in seq(1:length(folders))){
-      file.locs1 <- do.call(paste,
-                            list(folders[i],
-                                 list.files(path = folders[i],
-                                            pattern = '*.csv'),
-                                 sep = '/'))
-      file.locs2 <- c(file.locs2, file.locs1)
-    }
-  } else{
-    file.locs2 <- paste(directory,
-                        list.files(path = directory, pattern = '*.csv'),
-                        sep = '/')
-  }
-
-  # Read in files located by the steps above and rename columns
-  detect.list <- lapply(file.locs2, FUN = read.csv,
-                        header = T, stringsAsFactors = F)
+  # Read in files and rename columns
+  detect.list <- lapply(files, FUN = read.csv,
+                        stringsAsFactors = F)
   for (i in seq(1:length(detect.list))){
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
                                  'trans.name', 'trans.serial', 'sensor.value',
