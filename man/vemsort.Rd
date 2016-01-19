@@ -13,7 +13,7 @@ vemsort(directory = getwd(), false.det = NULL)
 false detections to produce flags.}
 }
 \value{
-Output is a dplyr table data frame containing all detections from
+Output is a data.table containing all detections from
    the directory's CSV files
 }
 \description{

@@ -1,6 +1,6 @@
 Package: TelemetryR
 Title: Handle VEMCO detection data.
-Version: 0.3
+Version: 0.4
 Authors@R: "Mike O'Brien <obrien@umces.edu> [aut, cre]"
 Description: Aggregates, sorts, and prepares detections to be dispersed to the
     ACT database. Also houses a couple fun functions used to play with
@@ -8,13 +8,14 @@ Description: Aggregates, sorts, and prepares detections to be dispersed to the
 Depends:
     R (>= 3.1.1)
 Imports:
+    data.table,
     dplyr,
-    lubridate,
-    ggplot2,
-    sp,
-    raster,
     gdistance,
     geoR,
+    ggplot2,
+    lubridate,
+    raster,
+    sp,
     SpatialTools
 License: What license is it under?
 LazyData: true

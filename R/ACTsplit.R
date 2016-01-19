@@ -47,8 +47,8 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
   enddate <- lubridate::ymd(end, tz = 'America/New_York')
 
   detects <- dplyr::filter(detects,
-                           lubridate::floor_date(date.local, "day") >= stdate &
-                           lubridate::floor_date(date.local, "day") <= enddate)
+                           date.local >= stdate &
+                           date.local <= enddate)
 
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,

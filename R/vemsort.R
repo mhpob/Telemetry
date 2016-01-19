@@ -12,7 +12,7 @@
 #' @param directory String. Location of CSV data, defaults to current wd.
 #' @param false.det Numeric vector. Contains tag ID codes of known
 #'    false detections to produce flags.
-#' @return Output is a dplyr table data frame containing all detections from
+#' @return Output is a data.table containing all detections from
 #'    the directory's CSV files
 #' @export
 #' @examples
@@ -21,33 +21,14 @@
 #'          c('37119', '64288'))
 
 vemsort <- function(directory = getwd(), false.det = NULL) {
-  # List all files within the "detections" folder
-  files <- list.files(path = directory)
-  files <- paste(directory, files, sep = '/')
-  # Pull out sub-folders within the "detections" folder
-  folders <- files[file.info(files)$isdir]
+  # List all files within the provided directory
+  files <- list.files(path = directory, pattern = '*.csv', full.names = T,
+                      recursive = T)
 
-  # Create file paths for all files ending in ".csv" within the sub-folders
-  file.locs1 <- NULL
-  file.locs2 <- NULL
-  if(length(folders) > 0L){
-    for (i in seq(1:length(folders))){
-      file.locs1 <- do.call(paste,
-                            list(folders[i],
-                                 list.files(path = folders[i],
-                                            pattern = '*.csv'),
-                                 sep = '/'))
-      file.locs2 <- c(file.locs2, file.locs1)
-    }
-  } else{
-    file.locs2 <- paste(directory,
-                        list.files(path = directory, pattern = '*.csv'),
-                        sep = '/')
-  }
+  # Read in files and rename columns
+  detect.list <- suppressWarnings(lapply(files, FUN = data.table::fread,
+                        stringsAsFactors = F))
 
-  # Read in files located by the steps above and rename columns
-  detect.list <- lapply(file.locs2, FUN = read.csv,
-                        header = T, stringsAsFactors = F)
   for (i in seq(1:length(detect.list))){
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
                                  'trans.name', 'trans.serial', 'sensor.value',
@@ -55,23 +36,18 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   }
 
   # Make list into data frame
-  detects <- do.call(rbind.data.frame, detect.list)
+  detects <- do.call(rbind, detect.list)
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = "America/New_York")
   # pull out transmitter ID Standard
-  detects$trans.num <- as.numeric(sapply(
-    strsplit(detects[, 'transmitter'], '-'), '[[', 3))
+  detects <- detects[, trans.num := sapply(strsplit(transmitter, '-'), '[[', 3)]
+  detects$trans.num <- as.numeric(detects$trans.num)
 
-  if(is.null(false.det)){
-    detects <- unique(detects)
-  } else{
-    detects <- unique(dplyr::mutate(detects,
-                                    flag = !transmitter %in% false.det))
-  }
+  detects <- unique(detects[, flag := !transmitter %in% false.det])
 
   row.names(detects) <- NULL
 
-  dplyr::tbl_df(detects)
+  detects
 }
