@@ -43,12 +43,9 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                                            tz = "America/New_York")
   # pull out transmitter ID Standard
   detects <- detects[, trans.num := sapply(strsplit(transmitter, '-'), '[[', 3)]
+  detects$trans.num <- as.numeric(detects$trans.num)
 
-  if(is.null(false.det)){
-    detects <- unique(detects)
-  } else{
-    detects <- unique(detects[, flag := !transmitter %in% false.det])
-  }
+  detects <- unique(detects[, flag := !transmitter %in% false.det])
 
   row.names(detects) <- NULL
 
