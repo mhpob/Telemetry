@@ -3,7 +3,7 @@
 \docType{data}
 \name{ACTtrans}
 \alias{ACTtrans}
-\title{Transmitters from A.C.T., Updated 2015-12-18}
+\title{Transmitters from A.C.T., Updated 2016-01-20}
 \format{A data frame with 25 variables and an evolving number of rows
 \describe{
   \item{Tag.ID.Code.Standard}{Full transmitter code}
@@ -30,7 +30,6 @@
   \item{Attachment.method}{How transmitter is attached (external, surgical
     implant, etc.)}
   \item{Comments}{Optional comments by researcher}
-  \item{Array.Affiliation}{ACT or FACT affiliation}
 }}
 \source{
 \url{http://www.theactnetwork.com/}

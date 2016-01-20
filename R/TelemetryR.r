@@ -8,7 +8,7 @@
 NULL
 
 
-#' Transmitters from A.C.T., Updated 2015-12-18
+#' Transmitters from A.C.T., Updated 2016-01-20
 #'
 #' Transmitters are submitted to the Atlantic Cooperative Telemetry Network
 #' (\url{http://www.theactnetwork.com/}) by individual researchers and archived
@@ -41,7 +41,6 @@ NULL
 #'   \item{Attachment.method}{How transmitter is attached (external, surgical
 #'     implant, etc.)}
 #'   \item{Comments}{Optional comments by researcher}
-#'   \item{Array.Affiliation}{ACT or FACT affiliation}
 #' }
 #' @docType data
 #' @usage data(ACTtrans)

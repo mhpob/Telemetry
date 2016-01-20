@@ -1,4 +1,4 @@
-ACTtrans <- read.csv('data-raw/active transmitters 12-18-15.csv',
+ACTtrans <- read.csv('data-raw/active transmitters 1-20-16.csv',
                      stringsAsFactors = F)
 
 devtools::use_data(ACTtrans, overwrite = T)
