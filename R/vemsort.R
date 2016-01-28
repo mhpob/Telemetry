@@ -26,8 +26,11 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
                       recursive = T)
 
   # Read in files and rename columns
-  detect.list <- suppressWarnings(lapply(files, FUN = data.table::fread,
-                        stringsAsFactors = F))
+  cat('Reading files...\n')
+  detect.list <- suppressWarnings(pbapply::pblapply(files,
+                                                    FUN = data.table::fread,
+                                                    stringsAsFactors = F))
+  cat('Done.\n')
 
   for (i in seq(1:length(detect.list))){
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
@@ -36,7 +39,9 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   }
 
   # Make list into data frame
+  cat('Binding files...\n')
   detects <- do.call(rbind, detect.list)
+  cat('Done.\n')
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
