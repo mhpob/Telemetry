@@ -54,7 +54,9 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
                       !Tag.ID.Code.Standard %in% my.trans)
 
-  id <- merge(detects, id[, c(1:2, 13:14)],
+  id <- merge(detects, id[, names(id) %in%
+                            c('Tag.ID.Code.Standard', 'ID.Standard',
+                              'Primary.Researcher')],
               by.x = c('transmitter', 'trans.num'),
               by.y = c('Tag.ID.Code.Standard', 'ID.Standard'))
 
@@ -67,25 +69,35 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
                         flag == T)
 
 
-  j <- split(id, id$Primary.Researcher)
+  id.list <- split(data.frame(id), id$Primary.Researcher)
 
   csv.root <- ifelse(!is.null(out), out,
                      ifelse(is.data.frame(directory),
                             getwd(), directory))
 
+  cat('Writing files...\n')
+
   if(write == TRUE){
-    for(i in seq(length(j))){
-      j[[i]] <- j[[i]][c(3:4, 1, 5:11)]
-      names(j[[i]]) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
+    pb <- txtProgressBar(char = '+', width = 50, style = 3)
+    for(i in seq(length(id.list))){
+      id.list[[i]] <- id.list[[i]][
+        c('date.utc','receiver', 'transmitter', 'trans.name', 'trans.serial',
+          'sensor.value', 'sensor.unit', 'station', 'lat', 'long')]
+      names(id.list[[i]]) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
                     'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
                     'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
-      j[[i]] <- j[[i]][order(j[[i]][3], j[[i]][1]),]
-      write.csv(j[[i]], file = paste(csv.root,
-                                     paste0(gsub(' ', '', names(j[i])),
+      id.list[[i]] <- id.list[[i]][order(id.list[[i]]['Transmitter'],
+                                         id.list[[i]]['Date and Time (UTC)']),]
+      write.csv(id.list[[i]], file = paste(csv.root,
+                                     paste0(gsub(' ', '', names(id.list[i])),
                                             Sys.Date(),'.csv'), sep = '/'),
                 row.names = F)
+      setTxtProgressBar(pb, i)
     }
+    close(pb)
   }
+
+  cat('Done.\n')
 
   list(UNID = unid, ID_flag = flag.id)
 }
