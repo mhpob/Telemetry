@@ -40,6 +40,7 @@ ACTupdate <- function(){
                          'ID Sensor II', 'Tag Life')
     ACTtrans[, numeric.columns]<- sapply(ACTtrans[, numeric.columns],
                                          as.numeric)
+    names(ACTtrans) <- gsub(' ', '.', names(ACTtrans))
 
     save(ACTtrans, file = 'ACTtrans.rda')
   } else{
