@@ -51,6 +51,6 @@ ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
            start = 20140401, end = 20140801)
 }
 \seealso{
-\code{\link{vemsort}}
+\code{\link{vemsort}}, \code{\link{ACTupdate}}
 }
 

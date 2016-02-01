@@ -24,7 +24,7 @@
 #' @return Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
 #'    will be found in your current working directory by default.
-#' @seealso \code{\link{vemsort}}
+#' @seealso \code{\link{vemsort}}, \code{\link{ACTupdate}}
 #' @export
 #' @examples
 #' ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')

@@ -1,10 +1,26 @@
 #' Download ACT data base.
 #'
-#' \code{ACTget} connects to the \href{http://www.theactnetwork.com/}{ACT Network}
-#' Dropbox data base, downloads the transmitter list, and converts the list to
-#' RData format.
+#' \code{ACTupdate} connects to the
+#' \href{http://www.theactnetwork.com/}{ACT Network} Dropbox data base,
+#' downloads the transmitter list, and converts the list to RData format. In
+#' order to access Dropbox, you'll need to log in and create an authorization
+#' token. The token can be saved for later use.
+#'
+#' The function checks if a local version of the ACT transmitter data base
+#' exists. If it does not, or if the local version is older than the Dropbox
+#' version, it downloads the file from Dropbox. The .xlsx is converted to RData
+#' and deleted unless keep == T.
+#'
+#' @param keep logical. Should you keep the downloaded xlsx? Default is \code{F}.
+#' @return Saves a copy of the current "Active transmitters mm-dd-yy.xlsx"
+#'    spreadsheet to your working directory in RData format as "ACTtrans.rda".
+#'    If keep == T, it also will save the orignial .xlsx.
+#' @seealso \code{\link{vemsort}}, \code{\link{ACTsplit}}
+#' @export
+#' @examples
+#' ACTupdate()
 
-ACTupdate <- function(){
+ACTupdate <- function(keep = F){
   rdrop2::drop_auth()
   drop.ACT <- rdrop2::drop_search('Active')
 
@@ -34,7 +50,9 @@ ACTupdate <- function(){
                                    col_types = c(rep('text', 6),
                                                  'date', 'text', 'date',
                                                  rep('text', 15)))
-    file.remove(file)
+    if(keep == F){
+      file.remove(file)
+    }
 
     numeric.columns <- c('ID Standard', 'ID Sensor I',
                          'ID Sensor II', 'Tag Life')
@@ -44,6 +62,6 @@ ACTupdate <- function(){
 
     save(ACTtrans, file = 'ACTtrans.rda')
   } else{
-    message('Using current version of ACT data base.')
+    message("You're using the current version of the ACT data base.")
   }
 }
