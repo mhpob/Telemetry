@@ -13,7 +13,9 @@
 #' @param false.det Numeric vector. Contains tag ID codes of known
 #'    false detections to produce flags.
 #' @return Output is a data.table containing all detections from
-#'    the directory's CSV files
+#'    the directory's CSV files. Adds a column containing local time of the
+#'    detections (as defined by \code{Sys.timzone}) and a column containing
+#'    transmitter ID standards
 #' @export
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
@@ -45,7 +47,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
-                                           tz = "America/New_York")
+                                           tz = Sys.timezone())
   # pull out transmitter ID Standard
   detects <- detects[, trans.num := sapply(strsplit(transmitter, '-'), '[[', 3)]
   detects$trans.num <- as.numeric(detects$trans.num)
