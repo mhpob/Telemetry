@@ -24,7 +24,7 @@
 #' @return Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
 #'    will be found in your current working directory by default.
-#' @seealso \code{\link{vemsort}}
+#' @seealso \code{\link{vemsort}}, \code{\link{ACTupdate}}
 #' @export
 #' @examples
 #' ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
@@ -33,7 +33,7 @@
 #'            start = 20140401, end = 20140801)
 
 ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
-                     write = TRUE, out = NULL,
+                     write = TRUE, out = NULL, ACTtrans = NULL,
                      start = 20000101, end = Sys.Date()){
 
   detects <- if(is.data.frame(directory)){
@@ -49,6 +49,20 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
   detects <- dplyr::filter(detects,
                            date.local >= stdate &
                            date.local <= enddate)
+
+  # Check for ACT transmitter data
+  if(!is.null(ACTtrans)){
+    load(ACTtrans)
+  } else{
+    ACT.loc <- list.files(getwd(), recursive = T, pattern = 'ACTtrans.rda')
+    if(length(ACT.loc) > 0){
+      load(ACT.loc)
+    } else{
+      message('ACT transmitters not found. Downloading file to working directory.')
+      ACTupdate()
+      load('ACTtrans.rda')
+    }
+  }
 
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
