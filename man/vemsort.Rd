@@ -14,7 +14,9 @@ false detections to produce flags.}
 }
 \value{
 Output is a data.table containing all detections from
-   the directory's CSV files
+   the directory's CSV files. Adds a column containing local time of the
+   detections (as defined by \code{Sys.timzone}) and a column containing
+   transmitter ID standards
 }
 \description{
 \code{vemsort} finds and combines all VEMCO CSV files in a directory
