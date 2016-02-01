@@ -1,3 +1,8 @@
+#' Download ACT data base.
+#'
+#' \code{ACTget} connects to the \href{http://www.theactnetwork.com/}{ACT Network}
+#' Dropbox data base, downloads the transmitter list, and converts the list to
+#' RData format.
 
 ACTupdate <- function(){
   rdrop2::drop_auth()
