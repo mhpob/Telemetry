@@ -29,10 +29,10 @@ ACTupdate <- function(keep = F){
                             pattern = 'ACTtrans.rda')
 
     if(length(local.ACT) > 0){
-      local.ctime <- file.info(local.ACT)$ctime
-      drop.ctime <- drop.ACT$client_mtime
-      drop.ctime <- lubridate::dmy_hms(strsplit(drop.ctime, ',|[+]')[[1]][2])
-      drop.ctime > local.ctime
+      local.mtime <- file.info(local.ACT)$mtime
+      drop.mtime <- drop.ACT$client_mtime
+      drop.mtime <- lubridate::dmy_hms(strsplit(drop.mtime, ',|[+]')[[1]][2])
+      drop.mtime > local.mtime
       }else{
         TRUE
       }
