@@ -10,6 +10,7 @@
 #'
 #' @param directory String passed on to \code{\link{vemsort}}. Location of CSV
 #'    data, which defaults to current working directory.
+#' @param ACTtrans character. Location of ACT transmitter database.
 #' @param my.trans Numeric vector. Tag ID codes that you want removed prior
 #'    to distribution.
 #' @param false.det Numeric vector passed on to \code{\link{vemsort}}. Contains
@@ -32,8 +33,8 @@
 #' ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
 #'            start = 20140401, end = 20140801)
 
-ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
-                     write = TRUE, out = NULL, ACTtrans = NULL,
+ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
+                     false.det = NULL, write = TRUE, out = NULL,
                      start = 20000101, end = Sys.Date()){
 
   detects <- if(is.data.frame(directory)){
@@ -50,19 +51,7 @@ ACTsplit <- function(directory = getwd(), my.trans = NULL, false.det = NULL,
                            date.local >= stdate &
                            date.local <= enddate)
 
-  # Check for ACT transmitter data
-  if(!is.null(ACTtrans)){
-    load(ACTtrans)
-  } else{
-    ACT.loc <- list.files(getwd(), recursive = T, pattern = 'ACTtrans.rda')
-    if(length(ACT.loc) > 0){
-      load(ACT.loc)
-    } else{
-      message('ACT transmitters not found. Downloading file to working directory.')
-      ACTupdate()
-      load('ACTtrans.rda')
-    }
-  }
+  load(ACTtrans)
 
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
