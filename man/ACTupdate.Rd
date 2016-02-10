@@ -4,31 +4,38 @@
 \alias{ACTupdate}
 \title{Download ACT data base.}
 \usage{
-ACTupdate(keep = F)
+ACTupdate(sheet = "active", local.ACT = NULL, keep = F)
 }
 \arguments{
+\item{sheet}{character. Name, or part of the name, of the desired sheet to
+download. This will be appended to the abbreviation "ACT" to name the
+local version of the downloaded ACT spreadsheet. Defaults to "active".}
+
+\item{local.ACT}{character. Name of the local ACT spreadsheet within the
+working directory. Default is NULL.}
+
 \item{keep}{logical. Should you keep the downloaded xlsx? Default is \code{F}.}
 }
 \value{
-Saves a copy of the current "Active transmitters mm-dd-yy.xlsx"
-   spreadsheet to your working directory in RData format as "ACTtrans.rda".
-   If keep == T, it also will save the orignial .xlsx.
+Saves a copy of the current spreadsheet to your working directory in
+   RData format. If keep == T, it also will save the orignial .xlsx.
 }
 \description{
 \code{ACTupdate} connects to the
-\href{http://www.theactnetwork.com/}{ACT Network} Dropbox data base,
-downloads the transmitter list, and converts the list to RData format. In
-order to access Dropbox, you'll need to log in and create an authorization
-token. The token can be saved for later use.
+\href{http://www.theactnetwork.com/}{ACT Network} Dropbox data base using
+\code{rdrop2}, downloads the selected sheet, and saves the sheet to RData
+format. Note that you will have to log in and create an authorization token.
+The token can be saved for later use.
 }
 \details{
-The function checks if a local version of the ACT transmitter data base
-exists. If it does not, or if the local version is older than the Dropbox
-version, it downloads the file from Dropbox. The .xlsx is converted to RData
-and deleted unless keep == T.
+The function checks if a local version of the selected spreadsheet exists.
+If it does not, or if the local version is older than the Dropbox version,
+it downloads the file from Dropbox. The .xlsx is converted to RData and
+deleted unless keep == T.
 }
 \examples{
 ACTupdate()
+ACTupdate(sheet = 'res')
 }
 \seealso{
 \code{\link{vemsort}}, \code{\link{ACTsplit}}
