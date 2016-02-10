@@ -20,16 +20,21 @@
 #' @examples
 #' ACTupdate()
 
-ACTupdate <- function(keep = F){
+ACTupdate <- function(sheet = 'res', local.ACT = NULL, keep = F){
+  local.ACT <- ifelse(is.null(local.ACT),
+                      paste0('ACT', sheet, '.rda'),
+                      local.ACT)
+
   rdrop2::drop_auth()
-  drop.ACT <- rdrop2::drop_search('Active')
+  drop.ACT <- rdrop2::drop_search(sheet,
+              path = 'ACT Network/ACT Transmitters, Researchers, and Arrays/')
 
   ACT_version_check <- function(){
-    local.ACT <- list.files(getwd(), recursive = T,
-                            pattern = 'ACTtrans.rda')
+    local.ACT.check <- list.files(getwd(), recursive = T,
+                            pattern = local.ACT)
 
-    if(length(local.ACT) > 0){
-      local.mtime <- file.info(local.ACT)$mtime
+    if(length(local.ACT.check) > 0){
+      local.mtime <- file.info(local.ACT.check)$mtime
       drop.mtime <- drop.ACT$client_mtime
       drop.mtime <- lubridate::dmy_hms(strsplit(drop.mtime, ',|[+]')[[1]][2])
       drop.mtime > local.mtime
@@ -42,25 +47,40 @@ ACTupdate <- function(keep = F){
     drop.loc <- drop.ACT %>% dplyr::select(path) %>% as.character()
 
     suppressMessages(rdrop2::drop_get(drop.loc, overwrite = T, progress = T))
-    file <- grep('Active', unlist(strsplit(drop.loc, '/')), value = T)
+    file <- strsplit(drop.loc, '/')[[1]][4]
 
     # For some reason, read_excel() doesn't read the numeric columns as numeric,
     # even when specifying explicitly. Read as text and convert to numeric later.
-    ACTtrans <- readxl::read_excel(file,
-                                   col_types = c(rep('text', 6),
-                                                 'date', 'text', 'date',
-                                                 rep('text', 15)))
+    # Allow read_excel to convert dates, though.
+    classes <- switch(substr(file, 1, 3),
+                      Act = c(rep('text', 6), 'date', 'text', 'date',
+                              rep('text', 15)),
+                      All = c(rep('text', 6), 'date', 'text', 'date',
+                              rep('text', 16)),
+                      Arc = c(rep('text', 6), 'date', 'text', 'date',
+                              rep('text', 14)),
+                      Res = rep('text', 9),
+                      Unk = c(rep('text', 6), 'date', 'text', 'date',
+                              rep('text', 15)))
+
+    new.local.ACT <- readxl::read_excel(file, col_types = classes)
+
     if(keep == F){
       file.remove(file)
     }
 
     numeric.columns <- c('ID Standard', 'ID Sensor I',
                          'ID Sensor II', 'Tag Life')
-    ACTtrans[, numeric.columns]<- sapply(ACTtrans[, numeric.columns],
-                                         as.numeric)
-    names(ACTtrans) <- gsub(' ', '.', names(ACTtrans))
+    new.local.ACT[, names(new.local.ACT) %in% numeric.columns] <-
+      sapply(new.local.ACT[, names(new.local.ACT) %in% numeric.columns],
+             as.numeric)
+    names(new.local.ACT) <- gsub(' ', '.', names(new.local.ACT))
 
-    save(ACTtrans, file = 'ACTtrans.rda')
+    local.ACT <- strsplit(local.ACT, '[.]')[[1]][1]
+    assign(local.ACT, new.local.ACT)
+    eval(substitute(save(name, file = paste0(local.ACT, '.rda')),
+                    list(name = local.ACT)))
+
   } else{
     message("You're using the current version of the ACT data base.")
   }
