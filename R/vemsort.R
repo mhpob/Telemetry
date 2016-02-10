@@ -44,6 +44,8 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   cat('Binding files...\n')
   detects <- do.call(rbind, detect.list)
   cat('Done.\n')
+
+  cat('Final data manipulation...\n')
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
@@ -53,6 +55,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   detects$trans.num <- as.numeric(detects$trans.num)
 
   detects <- unique(detects[, flag := !transmitter %in% false.det])
+  cat('Done.\n')
 
   row.names(detects) <- NULL
 
