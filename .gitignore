@@ -14,6 +14,9 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+# OAuth Permissions to test ACTupdate()
+.httr-oauth
+
 # =========================
 # Operating System Files
 # =========================
