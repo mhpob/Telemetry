@@ -1,14 +1,14 @@
 #' Draw circles around a Lat/Long point
 #'
 #' \code{ptcirc} creates a data frame of points forming a circle around a point.
-#' 
+#'
 #' The function was adopted from an answer on R-Help, 20061107, by Arien Lam
 #' \url{https://stat.ethz.ch/pipermail/r-help/2006-November/116851.html}.
 #' Each point is the place where you end up if you travel a certain distance
 #' along a great circle, which is uniquely defined by a point (your
 #' starting point) and an angle with the meridian at that point (your
 #' direction).
-#' 
+#'
 #' @param lonlatpoint Numeric vector. A set of longitude and latitude pairs
 #'    (decimal degrees), in that order. Can be a data frame or matrix, but the
 #'    first column must be the longitude and the second must be latitude.
@@ -25,17 +25,21 @@
 ptcirc <- function(lonlatpoint, radius) {
      Rearth <- 6372795 #"ellipsoidal quadratic mean radius of the earth", in m.
      magnitude <- radius / Rearth
-     
+
+     if(!is.data.frame(lonlatpoint)){
+       lonlatpoint <- data.frame(matrix(lonlatpoint, ncol = 2))
+     }
      lonlatpoint <- unique(lonlatpoint)
      lonlatpoint <- lonlatpoint * (pi / 180)
-     lonlatpoint[3] <- paste0('circle', seq(1,nrow(lonlatpoint),1))
-     
+     lonlatpoint <- cbind(lonlatpoint,
+                          paste0('circle', seq(1, nrow(lonlatpoint), 1)))
+
      direction <- seq(0, 2*pi, by = 2* pi / 100)
      direction <- rep(direction, times = nrow(lonlatpoint))
      lonlatpoint <- lonlatpoint[rep(1:nrow(lonlatpoint),
                                     each = 101),]
 
-     
+
      latb <- asin(cos(direction) * cos(lonlatpoint[,2]) * sin(magnitude) +
                     sin(lonlatpoint[,2]) * cos(magnitude))
      dlon <- atan2(cos(magnitude) - sin(lonlatpoint[,2]) * sin(latb),
