@@ -30,8 +30,8 @@ starting point) and an angle with the meridian at that point (your
 direction).
 }
 \examples{
-ptcirc(c(-75,37), 1609)
-ptcirc(data.frame(lon = c(-76,-80), lat = c(34,37)), 2000)
+ptcirc(c(-75, 37), 1609)
+ptcirc(data.frame(lon = c(-76, -80), lat = c(34, 37)), 2000)
 }
 \seealso{
 \code{\link{GEcircle}}
