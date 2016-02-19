@@ -19,8 +19,8 @@
 #' @seealso \code{\link{GEcircle}}
 #' @export
 #' @examples
-#' ptcirc(c(-75,37), 1609)
-#' ptcirc(data.frame(lon = c(-76,-80), lat = c(34,37)), 2000)
+#' ptcirc(c(-75, 37), 1609)
+#' ptcirc(data.frame(lon = c(-76, -80), lat = c(34, 37)), 2000)
 
 ptcirc <- function(lonlatpoint, radius) {
      Rearth <- 6372795 #"ellipsoidal quadratic mean radius of the earth", in m.
@@ -34,17 +34,17 @@ ptcirc <- function(lonlatpoint, radius) {
      lonlatpoint <- cbind(lonlatpoint,
                           paste0('circle', seq(1, nrow(lonlatpoint), 1)))
 
-     direction <- seq(0, 2*pi, by = 2* pi / 100)
+     direction <- seq(0, 2 * pi, by = 2 * pi / 100)
      direction <- rep(direction, times = nrow(lonlatpoint))
      lonlatpoint <- lonlatpoint[rep(1:nrow(lonlatpoint),
                                     each = 101),]
 
 
-     latb <- asin(cos(direction) * cos(lonlatpoint[,2]) * sin(magnitude) +
-                    sin(lonlatpoint[,2]) * cos(magnitude))
-     dlon <- atan2(cos(magnitude) - sin(lonlatpoint[,2]) * sin(latb),
-                   sin(direction) * sin(magnitude) * cos(lonlatpoint[,2]))
-     lonb <- lonlatpoint[,1] - dlon + pi / 2
+     latb <- asin(cos(direction) * cos(lonlatpoint[, 2]) * sin(magnitude) +
+                    sin(lonlatpoint[, 2]) * cos(magnitude))
+     dlon <- atan2(cos(magnitude) - sin(lonlatpoint[, 2]) * sin(latb),
+                   sin(direction) * sin(magnitude) * cos(lonlatpoint[, 2]))
+     lonb <- lonlatpoint[, 1] - dlon + pi / 2
 
      lonb[lonb >  pi] <- lonb[lonb >  pi] - 2 * pi
      lonb[lonb < -pi] <- lonb[lonb < -pi] + 2 * pi
@@ -52,5 +52,5 @@ ptcirc <- function(lonlatpoint, radius) {
      latb <- latb * (180 / pi)
      lonb <- lonb * (180 / pi)
 
-     data.frame(long = lonb, lat = latb, circle = lonlatpoint[,3])
+     data.frame(long = lonb, lat = latb, circle = lonlatpoint[, 3])
 }
