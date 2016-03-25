@@ -42,7 +42,7 @@
 #' @export
 
 
-quo_an <- function(wq, det, bin_width = 1, pres_abs = F, ci = F, ...){
+quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   # Create breaks.
   minval <- min(wq, na.rm = T)
   maxval <- max(wq, na.rm = T)
@@ -54,35 +54,35 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, ci = F, ...){
   bins <- cut(wq, brks)
 
   # Aggregate by environmental bins.
-  if(ci = T){
-    boot_func <- function(x, index){
-      strap <- x[index]
-      if(pres_abs == T){
-        # Presence/Absence
-        p_ab <- strap > 0
-        fish <- aggregate(p_ab ~ bins, FUN = sum)
-      } else{
-        # Incidence
-        fish <- aggregate(strap ~ bins, FUN = sum)
-      }
-      as.vector(fish$strap)/sum(fish$strap)
+  boot_func <- function(x, index){
+    strap <- x[index]
+    if(pres_abs == T){
+      # Presence/Absence
+      strap <- strap > 0
+      fish <- aggregate(strap ~ bins, FUN = sum)
+    } else{
+      # Incidence
+      fish <- aggregate(strap ~ bins, FUN = sum)
     }
-
-    strap <- boot(det, boot_func, ...)
-
-    #Confidence Interval
-    ci <- NULL
-    for(t in 1:length(strap$t0)){
-      hold <- boot.ci(strap, type = 'perc', index = t)$percent[4:5]
-      ci <- rbind(ci, hold)
-    }
+    as.vector(fish$strap)/sum(fish$strap)
   }
+
+  strap <- boot::boot(det, boot_func, R)
+
+  #Confidence Interval
+  c_i <- NULL
+  for(i in 1:length(strap$t0)){
+    hold <- boot::boot.ci(strap, type = 'perc', index = i)$percent[4:5]
+    c_i <- rbind(c_i, hold)
+  }
+  row.names(c_i) <- NULL
 
 
   if(pres_abs == T){
     # Presence/Absence
     p_ab <- det > 0
     fish <- aggregate(p_ab ~ bins, FUN = sum)
+    names(fish) <- c('bins', 'det')
   } else{
     # Incidence
     fish <- aggregate(det ~ bins, FUN = sum)
@@ -91,12 +91,7 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, ci = F, ...){
   station <- aggregate(wq ~ bins, FUN = length)
 
   # Merge data and correctly order bins.
-  q_an <- merge(data.frame(bins = levels(bins)),
-                fish, all = T)
-  q_an <- merge(q_an, station, all = T)
-  q_an$bins <- factor(levels(q_an$bins), levels = levels(bins))
-  q_an <- q_an[order(q_an$bins),]
-  row.names(q_an) <- NULL
+  q_an <- merge(fish, station)
   q_an[is.na(q_an)] <- 0
 
   # Quotient analysis
@@ -105,16 +100,20 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, ci = F, ...){
 
   q_an$qe <- q_an$pme / q_an$pse
 
-  names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe', 'Qe')
+  q_an$ci.025 <- c_i[, 1] / q_an$pse
+  q_an$ci.975 <- c_i[, 2] / q_an$pse
+
+  names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe',
+                   'Qe', 'CI_0.025', 'CI_0.975')
   q_an
 }
 
 
-library(boot)
 test <- read.csv('c:/users/secor lab/downloads/q_an_test.csv')
 wq <- test$temp
 det <- test$catch
 bin_width = 0.2
 pres_abs = T
-
+ci = T
+R=999
 #take these and divide by pse to get qe bounds
