@@ -28,17 +28,22 @@
 #' for the water quality bin (\emph{Qe}) is calculated as \emph{pMe/pSe}.
 #'
 #' Values greater than 1 \dQuote{indicate a greater number of positive (fish)
-#' stations than expected based on sampling effort}.
+#' stations than expected based on sampling effort}. Confidence intervals are
+#' calculated using \code{boot.ci} from the \code{boot} package. The \code{type}
+#' input to \code{boot.ci} is "\code{perc}"; all other inputs to \code{boot} and
+#' \code{boot.ci} are the function defaults.
 #'
 #' @param wq Numeric. Water quality data at each station.
 #' @param det Numeric. Number of detections at each station.
 #' @param bin_width Numeric. Size of water quality bins. Default is 1.
 #' @param pres_abs Logical. Should the data be reduced to presence/absence?
 #'                Default is false.
+#' @param R Numeric. Number of bootstrap replicates. Default is 999.
 #' @return Output is a data frame with bin labels, number of detections or
 #'                number sites with detections (depending on \code{pres_abs}
 #'                input) within each bin, number of sites within each bin, and
-#'                pMe, pSe, and Qe as defined above.
+#'                pMe, pSe, and Qe as defined above. Confidence intervals at the
+#'                0.025 and 0.975 percentiles are also provided.
 #' @export
 
 quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
