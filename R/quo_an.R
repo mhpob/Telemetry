@@ -41,10 +41,6 @@
 #'                pMe, pSe, and Qe as defined above.
 #' @export
 
-test <- read.csv('c:/users/secor lab/downloads/q_an_test.csv')
-test.out <- quo_an(wq = test$temp, det = test$catch, bin_width = 0.2,
-                   pres_abs = T, R = 999)
-
 quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   # Create breaks.
   minval <- min(wq, na.rm = T)
@@ -79,9 +75,9 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   strap <- boot::boot(det, boot_func, R)
 
   #Confidence Interval
-  c_i <- matrix(nrow = length(strap$t0), ncol = 2)
+  ci <- matrix(nrow = length(strap$t0), ncol = 2)
   for(i in 1:length(strap$t0)){
-    c_i[i,] <- boot::boot.ci(strap, type = 'perc', index = i)$percent[4:5]
+    ci[i,] <- boot::boot.ci(strap, type = 'perc', index = i)$percent[4:5]
   }
 
   fish <- agg.func(det)
@@ -98,8 +94,8 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
 
   q_an$qe <- q_an$pme / q_an$pse
 
-  q_an$ci.025 <- c_i[, 1] / q_an$pse
-  q_an$ci.975 <- c_i[, 2] / q_an$pse
+  q_an$ci.025 <- ci[, 1] / q_an$pse
+  q_an$ci.975 <- ci[, 2] / q_an$pse
 
   names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe',
                    'Qe', 'CI_0.025', 'CI_0.975')
