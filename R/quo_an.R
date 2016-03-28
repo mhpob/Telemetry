@@ -60,20 +60,16 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   # Aggregate by environmental bins.
   agg.func <- function(x){
     if(pres_abs == T){
-      # Presence/Absence
+      # Only count number over 0 if presence/absence
       x <- x > 0
-      binned_det <- aggregate(x ~ bins, FUN = sum)
-    } else{
-      # Incidence
-      binned_det <- aggregate(x ~ bins, FUN = sum)
     }
-    names(binned_det) <- c('bins', 'det')
-    binned_det
+    as.data.frame(xtabs(x ~ bins), responseName = 'det')
   }
 
   boot_func <- function(x, index){
     x <- x[index]
     boot_det <- agg.func(x)
+    # Bootstrapped pMe
     as.vector(boot_det$det)/sum(boot_det$det)
   }
 
@@ -87,11 +83,10 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
 
   fish <- agg.func(det)
 
-  station <- aggregate(wq ~ bins, FUN = length)
+  station <- as.data.frame(table(bins), responseName = 'wq')
 
   # Merge data and correctly order bins.
   q_an <- merge(fish, station)
-  q_an[is.na(q_an)] <- 0
 
   # Quotient analysis
   q_an$pme <- q_an$det / sum(q_an$det)
