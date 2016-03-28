@@ -28,21 +28,25 @@
 #' for the water quality bin (\emph{Qe}) is calculated as \emph{pMe/pSe}.
 #'
 #' Values greater than 1 \dQuote{indicate a greater number of positive (fish)
-#' stations than expected based on sampling effort}.
+#' stations than expected based on sampling effort}. Confidence intervals are
+#' calculated using \code{boot.ci} from the \code{boot} package. The \code{type}
+#' input to \code{boot.ci} is "\code{perc}"; all other inputs to \code{boot} and
+#' \code{boot.ci} are the function defaults.
 #'
 #' @param wq Numeric. Water quality data at each station.
 #' @param det Numeric. Number of detections at each station.
 #' @param bin_width Numeric. Size of water quality bins. Default is 1.
 #' @param pres_abs Logical. Should the data be reduced to presence/absence?
 #'                Default is false.
+#' @param R Numeric. Number of bootstrap replicates. Default is 999.
 #' @return Output is a data frame with bin labels, number of detections or
 #'                number sites with detections (depending on \code{pres_abs}
 #'                input) within each bin, number of sites within each bin, and
-#'                pMe, pSe, and Qe as defined above.
+#'                pMe, pSe, and Qe as defined above. Confidence intervals at the
+#'                0.025 and 0.975 percentiles are also provided.
 #' @export
 
-
-quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
+quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   # Create breaks.
   minval <- min(wq, na.rm = T)
   maxval <- max(wq, na.rm = T)
@@ -54,33 +58,51 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F){
   bins <- cut(wq, brks)
 
   # Aggregate by environmental bins.
-  if(pres_abs == T){
-    # Presence/Absence
-    fish <- data.frame(det, bins)
-    fish <- fish[det > 0,]
-    fish <- aggregate(det ~ bins, data = fish, FUN = length)
-  } else{
-    # Incidence
-    fish <- aggregate(det ~ bins, FUN = sum)
+  agg.func <- function(x){
+    if(pres_abs == T){
+      # Presence/Absence
+      x <- x > 0
+      binned_det <- aggregate(x ~ bins, FUN = sum)
+    } else{
+      # Incidence
+      binned_det <- aggregate(x ~ bins, FUN = sum)
+    }
+    names(binned_det) <- c('bins', 'det')
+    binned_det
   }
+
+  boot_func <- function(x, index){
+    x <- x[index]
+    boot_det <- agg.func(x)
+    as.vector(boot_det$det)/sum(boot_det$det)
+  }
+
+  strap <- boot::boot(det, boot_func, R)
+
+  #Confidence Interval
+  ci <- matrix(nrow = length(strap$t0), ncol = 2)
+  for(i in 1:length(strap$t0)){
+    ci[i,] <- boot::boot.ci(strap, type = 'perc', index = i)$percent[4:5]
+  }
+
+  fish <- agg.func(det)
 
   station <- aggregate(wq ~ bins, FUN = length)
 
   # Merge data and correctly order bins.
-  q_an <- merge(data.frame(bins = levels(bins)),
-                fish, all = T)
-  q_an <- merge(q_an, station, all = T)
-  q_an$bins <- factor(levels(q_an$bins), levels = levels(bins))
-  q_an <- q_an[order(q_an$bins),]
-  row.names(q_an) <- NULL
+  q_an <- merge(fish, station)
   q_an[is.na(q_an)] <- 0
-  
+
   # Quotient analysis
   q_an$pme <- q_an$det / sum(q_an$det)
   q_an$pse <- q_an$wq / sum(q_an$wq)
 
   q_an$qe <- q_an$pme / q_an$pse
 
-  names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe', 'Qe')
+  q_an$ci.025 <- ci[, 1] / q_an$pse
+  q_an$ci.975 <- ci[, 2] / q_an$pse
+
+  names(q_an) <- c('bin', 'detections', 'wq.var', 'pMe', 'pSe',
+                   'Qe', 'CI_0.025', 'CI_0.975')
   q_an
 }
