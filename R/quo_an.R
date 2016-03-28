@@ -41,6 +41,9 @@
 #'                pMe, pSe, and Qe as defined above.
 #' @export
 
+test <- read.csv('c:/users/secor lab/downloads/q_an_test.csv')
+test.out <- quo_an(wq = test$temp, det = test$catch, bin_width = 0.2,
+                   pres_abs = T, R = 999)
 
 quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   # Create breaks.
@@ -54,39 +57,34 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
   bins <- cut(wq, brks)
 
   # Aggregate by environmental bins.
-  boot_func <- function(x, index){
-    strap <- x[index]
+  agg.func <- function(x){
     if(pres_abs == T){
       # Presence/Absence
-      strap <- strap > 0
-      fish <- aggregate(strap ~ bins, FUN = sum)
+      x <- x > 0
+      binned_det <- aggregate(x ~ bins, FUN = sum)
     } else{
       # Incidence
-      fish <- aggregate(strap ~ bins, FUN = sum)
+      binned_det <- aggregate(x ~ bins, FUN = sum)
     }
-    as.vector(fish$strap)/sum(fish$strap)
+    names(binned_det) <- c('bins', 'det')
+    binned_det
+  }
+
+  boot_func <- function(x, index){
+    x <- x[index]
+    boot_det <- agg.func(x)
+    as.vector(boot_det$det)/sum(boot_det$det)
   }
 
   strap <- boot::boot(det, boot_func, R)
 
   #Confidence Interval
-  c_i <- NULL
+  c_i <- matrix(nrow = length(strap$t0), ncol = 2)
   for(i in 1:length(strap$t0)){
-    hold <- boot::boot.ci(strap, type = 'perc', index = i)$percent[4:5]
-    c_i <- rbind(c_i, hold)
+    c_i[i,] <- boot::boot.ci(strap, type = 'perc', index = i)$percent[4:5]
   }
-  row.names(c_i) <- NULL
 
-
-  if(pres_abs == T){
-    # Presence/Absence
-    p_ab <- det > 0
-    fish <- aggregate(p_ab ~ bins, FUN = sum)
-    names(fish) <- c('bins', 'det')
-  } else{
-    # Incidence
-    fish <- aggregate(det ~ bins, FUN = sum)
-  }
+  fish <- agg.func(det)
 
   station <- aggregate(wq ~ bins, FUN = length)
 
@@ -107,13 +105,3 @@ quo_an <- function(wq, det, bin_width = 1, pres_abs = F, R = 999){
                    'Qe', 'CI_0.025', 'CI_0.975')
   q_an
 }
-
-
-test <- read.csv('c:/users/secor lab/downloads/q_an_test.csv')
-wq <- test$temp
-det <- test$catch
-bin_width = 0.2
-pres_abs = T
-ci = T
-R=999
-#take these and divide by pse to get qe bounds
