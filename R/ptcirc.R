@@ -22,10 +22,6 @@
 #' ptcirc(c(-75, 37), 1609)
 #' ptcirc(data.frame(lon = c(-76, -80), lat = c(34, 37)), 2000)
 
-lonlatpoint <- data.frame(lon = c(-76, -80), lat = c(34, 37))
-
-radius <- c(400, 500, 600)
-
 ptcirc <- function(lonlatpoint, radius) {
      Rearth <- 6372795 #"ellipsoidal quadratic mean radius of the earth", in m.
      magnitude <- radius / Rearth
@@ -34,20 +30,20 @@ ptcirc <- function(lonlatpoint, radius) {
        lonlatpoint <- data.frame(matrix(lonlatpoint, ncol = 2))
      }
 
+     size <- nrow(lonlatpoint)
      lonlatpoint <- unique(lonlatpoint)
-     lonlatpoint$circ <-  paste0('circle', seq_len(nrow(lonlatpoint)))
-     lonlatpoint <- lonlatpoint[rep(seq_len(nrow(lonlatpoint)),
+     lonlatpoint$circ <-  paste0('circle', seq_len(size))
+     lonlatpoint <- lonlatpoint[rep(seq_len(size),
                                     each = length(radius)),]
-     lonlatpoint$circ <- paste(lonlatpoint[,3], radius, sep = "_")
+     lonlatpoint$circ <- paste(lonlatpoint$circ, radius, sep = "_")
 
      lonlatpoint[, 1:2] <- lonlatpoint[, 1:2] * (pi / 180)
 
-
+     size <- nrow(lonlatpoint)
      direction <- seq(0, 2 * pi, by = 2 * pi / 100)
-     direction <- rep(direction, times = nrow(lonlatpoint))
+     direction <- rep(direction, times = size)
      magnitude <- rep(magnitude, each = 101)
-     lonlatpoint <- lonlatpoint[rep(1:nrow(lonlatpoint),
-                                    each = 101),]
+     lonlatpoint <- lonlatpoint[rep(1:size, each = 101),]
 
 
      latb <- asin(cos(direction) * cos(lonlatpoint[, 2]) * sin(magnitude) +
@@ -62,5 +58,5 @@ ptcirc <- function(lonlatpoint, radius) {
      latb <- latb * (180 / pi)
      lonb <- lonb * (180 / pi)
 
-     data.frame(long = lonb, lat = latb, circle = lonlatpoint[, 3])
+     data.frame(long = lonb, lat = latb, circle = lonlatpoint$circ)
 }
