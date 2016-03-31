@@ -29,15 +29,21 @@ ptcirc <- function(lonlatpoint, radius) {
      if(!is.data.frame(lonlatpoint)){
        lonlatpoint <- data.frame(matrix(lonlatpoint, ncol = 2))
      }
-     lonlatpoint <- unique(lonlatpoint)
-     lonlatpoint <- lonlatpoint * (pi / 180)
-     lonlatpoint <- cbind(lonlatpoint,
-                          paste0('circle', seq(1, nrow(lonlatpoint), 1)))
 
+     lonlatpoint <- unique(lonlatpoint)
+     size <- nrow(lonlatpoint)
+     lonlatpoint$circ <-  paste0('C', seq_len(size))
+     lonlatpoint <- lonlatpoint[rep(seq_len(size),
+                                    each = length(radius)),]
+     lonlatpoint$circ <- paste0(lonlatpoint$circ, '_', radius/1000, 'km')
+
+     lonlatpoint[, 1:2] <- lonlatpoint[, 1:2] * (pi / 180)
+
+     size <- nrow(lonlatpoint)
      direction <- seq(0, 2 * pi, by = 2 * pi / 100)
-     direction <- rep(direction, times = nrow(lonlatpoint))
-     lonlatpoint <- lonlatpoint[rep(1:nrow(lonlatpoint),
-                                    each = 101),]
+     direction <- rep(direction, times = size)
+     magnitude <- rep(magnitude, each = 101)
+     lonlatpoint <- lonlatpoint[rep(1:size, each = 101),]
 
 
      latb <- asin(cos(direction) * cos(lonlatpoint[, 2]) * sin(magnitude) +
@@ -52,5 +58,5 @@ ptcirc <- function(lonlatpoint, radius) {
      latb <- latb * (180 / pi)
      lonb <- lonb * (180 / pi)
 
-     data.frame(long = lonb, lat = latb, circle = lonlatpoint[, 3])
+     data.frame(long = lonb, lat = latb, circle = lonlatpoint$circ)
 }
