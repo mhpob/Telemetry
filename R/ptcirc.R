@@ -30,12 +30,12 @@ ptcirc <- function(lonlatpoint, radius) {
        lonlatpoint <- data.frame(matrix(lonlatpoint, ncol = 2))
      }
 
-     size <- nrow(lonlatpoint)
      lonlatpoint <- unique(lonlatpoint)
-     lonlatpoint$circ <-  paste0('circle', seq_len(size))
+     size <- nrow(lonlatpoint)
+     lonlatpoint$circ <-  paste0('C', seq_len(size))
      lonlatpoint <- lonlatpoint[rep(seq_len(size),
                                     each = length(radius)),]
-     lonlatpoint$circ <- paste(lonlatpoint$circ, radius, sep = "_")
+     lonlatpoint$circ <- paste0(lonlatpoint$circ, '_', radius/1000, 'km')
 
      lonlatpoint[, 1:2] <- lonlatpoint[, 1:2] * (pi / 180)
 
