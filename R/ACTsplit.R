@@ -51,7 +51,7 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                            date.local >= stdate &
                            date.local <= enddate)
 
-  load(ACTtrans)
+  ACTtrans <- get(load(ACTtrans))
 
   # Filter for ID'ed detections that aren't yours
   id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
