@@ -81,6 +81,8 @@ ACTupdate <- function(sheet = 'active', local.ACT = NULL, keep = F){
       sapply(new.local.ACT[, names(new.local.ACT) %in% numeric.columns],
              as.numeric)
     names(new.local.ACT) <- gsub(' ', '.', names(new.local.ACT))
+    new.local.ACT$Primary.Researcher <- gsub('/', '.',
+                                             new.local.ACT$Primary.Researcher)
 
     local.ACT <- strsplit(local.ACT, '[.]')[[1]][1]
     assign(local.ACT, new.local.ACT)
