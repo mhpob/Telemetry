@@ -54,8 +54,8 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
   ACTtrans <- get(load(ACTtrans))
 
   # Filter for ID'ed detections that aren't yours
-  ACTid <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
-                      Tag.ID.Code.Sensor.I %in% detects$transmitter,
+  ACTid <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter |
+                      Tag.ID.Code.Sensor.I %in% detects$transmitter |
                       Tag.ID.Code.Sensor.II %in% detects$transmitter,
                       !Tag.ID.Code.Standard %in% my.trans)
 
