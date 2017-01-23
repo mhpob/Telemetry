@@ -35,7 +35,7 @@
 
 ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                      false.det = NULL, write = TRUE, out = NULL,
-                     start = 20000101, end = Sys.Date()){
+                     start = 20040101, end = Sys.Date()){
 
   detects <- if(is.data.frame(directory)){
     directory
