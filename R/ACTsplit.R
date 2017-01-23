@@ -60,10 +60,19 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                       !Tag.ID.Code.Standard %in% my.trans)
 
   id <- merge(detects, ACTid[, names(ACTid) %in%
-                            c('Tag.ID.Code.Standard', 'ID.Standard',
-                              'Primary.Researcher')],
-              by.x = c('transmitter', 'trans.num'),
-              by.y = c('Tag.ID.Code.Standard', 'ID.Standard'))
+                            c('Tag.ID.Code.Standard', 'Primary.Researcher')],
+              by.x = c('transmitter'),
+              by.y = c('Tag.ID.Code.Standard'), all.x = T)
+
+  id <- merge(id, ACTid[, names(ACTid) %in%
+                          c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')],
+              by.x = c('transmitter'),
+              by.y = c('Tag.ID.Code.Sensor.I'), all.x = T)
+
+  id <- merge(id, ACTid[, names(ACTid) %in%
+                          c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')],
+              by.x = c('transmitter'),
+              by.y = c('Tag.ID.Code.Sensor.II'), all.x = T)
 
   flag.id <- id[id$flag == F,]
   id <- id[id$flag == T,]
