@@ -5,7 +5,7 @@
 \title{Split detections into CSV files according to ACT database}
 \usage{
 ACTsplit(directory = getwd(), ACTtrans, my.trans = NULL, false.det = NULL,
-  write = TRUE, out = NULL, start = 20000101, end = Sys.Date())
+  write = TRUE, out = NULL, start = 20040101, end = Sys.Date())
 }
 \arguments{
 \item{directory}{String passed on to \code{\link{vemsort}}. Location of CSV

@@ -4,13 +4,10 @@
 \alias{vemsort}
 \title{Prepare VEMCO transmitter CSV files for analysis}
 \usage{
-vemsort(directory = getwd(), false.det = NULL)
+vemsort(directory = getwd())
 }
 \arguments{
 \item{directory}{String. Location of CSV data, defaults to current wd.}
-
-\item{false.det}{Numeric vector. Contains tag ID codes of known
-false detections to produce flags.}
 }
 \value{
 Output is a data.table containing all detections from
