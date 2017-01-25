@@ -74,6 +74,11 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
               by.x = c('transmitter'),
               by.y = c('Tag.ID.Code.Sensor.II'), all.x = T)
 
+  id$Primary.Researcher <- paste0(id$Primary.Researcher,
+                                  id$Primary.Researcher.x,
+                                  id$Primary.Researcher.y)
+  id$Primary.Researcher <- gsub('NA', '', id$Primary.Researcher)
+
   flag.id <- id[id$flag == F,]
   id <- id[id$flag == T,]
 
