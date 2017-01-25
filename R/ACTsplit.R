@@ -81,9 +81,7 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
   id <- id[, !c('Primary.Researcher.x', 'Primary.Researcher.y')]
 
 
-  unid <- dplyr::filter(detects,
-                        transmitter %in% setdiff(detects$transmitter,
-                                                 ACTtrans$Tag.ID.Code.Standard))
+  unid <- dplyr::filter(id, Primary.Researcher == '')
 
 
   id.list <- split(data.frame(id), id$Primary.Researcher)
