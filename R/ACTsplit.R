@@ -53,23 +53,17 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
 
   ACTtrans <- get(load(ACTtrans))
 
-  # Filter for ID'ed detections that aren't yours
-  ACTid <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter |
-                      Tag.ID.Code.Sensor.I %in% detects$transmitter |
-                      Tag.ID.Code.Sensor.II %in% detects$transmitter,
-                      !Tag.ID.Code.Standard %in% my.trans)
-
-  id <- merge(detects, ACTid[, names(ACTid) %in%
-                            c('Tag.ID.Code.Standard', 'Primary.Researcher')],
+  id <- merge(detects, ACTtrans[, names(ACTtrans) %in%
+                          c('Tag.ID.Code.Standard', 'Primary.Researcher')],
               by.x = c('transmitter'),
               by.y = c('Tag.ID.Code.Standard'), all.x = T)
 
-  id <- merge(id, ACTid[, names(ACTid) %in%
+  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
                           c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')],
               by.x = c('transmitter'),
               by.y = c('Tag.ID.Code.Sensor.I'), all.x = T)
 
-  id <- merge(id, ACTid[, names(ACTid) %in%
+  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
                           c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')],
               by.x = c('transmitter'),
               by.y = c('Tag.ID.Code.Sensor.II'), all.x = T)
@@ -81,7 +75,8 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
   id <- id[, !c('Primary.Researcher.x', 'Primary.Researcher.y')]
 
 
-  unid <- dplyr::filter(id, Primary.Researcher == '')
+  unid <- dplyr::filter(id, Primary.Researcher == ''|
+                          is.na(Primary.Researcher))
 
 
   id.list <- split(data.frame(id), id$Primary.Researcher)
