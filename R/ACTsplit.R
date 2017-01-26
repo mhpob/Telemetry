@@ -50,6 +50,8 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
 
   ACTtrans <- get(load(ACTtrans))
 
+  cat('Splitting...\n')
+
   id <- merge(detects, ACTtrans[, names(ACTtrans) %in%
                           c('Tag.ID.Code.Standard', 'Primary.Researcher')],
               by.x = c('transmitter'),
@@ -69,7 +71,7 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                                   id$Primary.Researcher.x,
                                   id$Primary.Researcher.y)
   id$Primary.Researcher <- gsub('NA', '', id$Primary.Researcher)
-  id <- id[, !c('Primary.Researcher.x', 'Primary.Researcher.y')]
+  id <- id[, !names(id) %in% c('Primary.Researcher.x', 'Primary.Researcher.y')]
 
 
   unid <- dplyr::filter(id, Primary.Researcher == ''|
@@ -82,9 +84,8 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                      ifelse(is.data.frame(directory),
                             getwd(), directory))
 
-  cat('Writing files...\n')
-
   if(write == TRUE){
+    cat('Writing files...\n')
     pb <- txtProgressBar(char = '+', width = 50, style = 3)
     for(i in seq(length(id.list))){
       id.list[[i]] <- id.list[[i]][
