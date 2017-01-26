@@ -5,16 +5,13 @@
 #'
 #' This function uses \code{\link{vemsort}} to import detections, then matches
 #' these detections with transmitters submitted to ACT. It also allows a
-#' specified date range, removal of personal or private transmitters, and false
-#' detections.
+#' specified date range and removal of personal or private transmitters.
 #'
 #' @param directory String passed on to \code{\link{vemsort}}. Location of CSV
 #'    data, which defaults to current working directory.
 #' @param ACTtrans character. Location of ACT transmitter database.
 #' @param my.trans Numeric vector. Tag ID codes that you want removed prior
 #'    to distribution.
-#' @param false.det Numeric vector passed on to \code{\link{vemsort}}. Contains
-#'    tag ID codes of known false detections.
 #' @param write Logical. Do you want to output CSV files? Useful if you are
 #'    only looking for unidentified detections.
 #' @param out String. Where do you want the CSV files placed?
@@ -34,13 +31,13 @@
 #'            start = 20140401, end = 20140801)
 
 ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
-                     false.det = NULL, write = TRUE, out = NULL,
+                     write = TRUE, out = NULL,
                      start = 20040101, end = Sys.Date()){
 
   detects <- if(is.data.frame(directory)){
     directory
     } else{
-      vemsort(directory, false.det)
+      vemsort(directory)
     }
 
   # Filter for date range
