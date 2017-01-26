@@ -10,19 +10,16 @@
 #' Latitude, Longitude.
 #'
 #' @param directory String. Location of CSV data, defaults to current wd.
-#' @param false.det Numeric vector. Contains tag ID codes of known
-#'    false detections to produce flags.
 #' @return Output is a data.table containing all detections from
 #'    the directory's CSV files. Adds a column containing local time of the
-#'    detections (as defined by \code{Sys.timzone}) and a column containing
-#'    transmitter ID standards
+#'    detections (as defined by \code{Sys.timzone}).
 #' @export
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
 #'          c('37119', '64288'))
 
-vemsort <- function(directory = getwd(), false.det = NULL) {
+vemsort <- function(directory = getwd()) {
   # List all files within the provided directory
   files <- list.files(path = directory, pattern = '*.csv', full.names = T,
                       recursive = T)
@@ -50,11 +47,7 @@ vemsort <- function(directory = getwd(), false.det = NULL) {
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = Sys.timezone())
-  # pull out transmitter ID Standard
-  detects <- detects[, trans.num := sapply(strsplit(transmitter, '-'), '[[', 3)]
-  detects$trans.num <- as.numeric(detects$trans.num)
 
-  detects <- unique(detects[, flag := !transmitter %in% false.det])
   cat('Done.\n')
 
   row.names(detects) <- NULL

@@ -5,16 +5,13 @@
 #'
 #' This function uses \code{\link{vemsort}} to import detections, then matches
 #' these detections with transmitters submitted to ACT. It also allows a
-#' specified date range, removal of personal or private transmitters, and false
-#' detections.
+#' specified date range and removal of personal or private transmitters.
 #'
 #' @param directory String passed on to \code{\link{vemsort}}. Location of CSV
 #'    data, which defaults to current working directory.
 #' @param ACTtrans character. Location of ACT transmitter database.
 #' @param my.trans Numeric vector. Tag ID codes that you want removed prior
 #'    to distribution.
-#' @param false.det Numeric vector passed on to \code{\link{vemsort}}. Contains
-#'    tag ID codes of known false detections.
 #' @param write Logical. Do you want to output CSV files? Useful if you are
 #'    only looking for unidentified detections.
 #' @param out String. Where do you want the CSV files placed?
@@ -34,13 +31,13 @@
 #'            start = 20140401, end = 20140801)
 
 ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
-                     false.det = NULL, write = TRUE, out = NULL,
-                     start = 20000101, end = Sys.Date()){
+                     write = TRUE, out = NULL,
+                     start = 20040101, end = Sys.Date()){
 
   detects <- if(is.data.frame(directory)){
     directory
     } else{
-      vemsort(directory, false.det)
+      vemsort(directory)
     }
 
   # Filter for date range
@@ -53,23 +50,32 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
 
   ACTtrans <- get(load(ACTtrans))
 
-  # Filter for ID'ed detections that aren't yours
-  id <- dplyr::filter(ACTtrans, Tag.ID.Code.Standard %in% detects$transmitter,
-                      !Tag.ID.Code.Standard %in% my.trans)
+  cat('Splitting...\n')
 
-  id <- merge(detects, id[, names(id) %in%
-                            c('Tag.ID.Code.Standard', 'ID.Standard',
-                              'Primary.Researcher')],
-              by.x = c('transmitter', 'trans.num'),
-              by.y = c('Tag.ID.Code.Standard', 'ID.Standard'))
+  id <- merge(detects, ACTtrans[, names(ACTtrans) %in%
+                          c('Tag.ID.Code.Standard', 'Primary.Researcher')],
+              by.x = c('transmitter'),
+              by.y = c('Tag.ID.Code.Standard'), all.x = T)
 
-  flag.id <- id[id$flag == F,]
-  id <- id[id$flag == T,]
+  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
+                          c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')],
+              by.x = c('transmitter'),
+              by.y = c('Tag.ID.Code.Sensor.I'), all.x = T)
 
-  unid <- dplyr::filter(detects,
-                        transmitter %in% setdiff(detects$transmitter,
-                                                 ACTtrans$Tag.ID.Code.Standard),
-                        flag == T)
+  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
+                          c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')],
+              by.x = c('transmitter'),
+              by.y = c('Tag.ID.Code.Sensor.II'), all.x = T)
+
+  id$Primary.Researcher <- paste0(id$Primary.Researcher,
+                                  id$Primary.Researcher.x,
+                                  id$Primary.Researcher.y)
+  id$Primary.Researcher <- gsub('NA', '', id$Primary.Researcher)
+  id <- id[, !names(id) %in% c('Primary.Researcher.x', 'Primary.Researcher.y')]
+
+
+  unid <- dplyr::filter(id, Primary.Researcher == ''|
+                          is.na(Primary.Researcher))
 
 
   id.list <- split(data.frame(id), id$Primary.Researcher)
@@ -78,9 +84,8 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                      ifelse(is.data.frame(directory),
                             getwd(), directory))
 
-  cat('Writing files...\n')
-
   if(write == TRUE){
+    cat('Writing files...\n')
     pb <- txtProgressBar(char = '+', width = 50, style = 3)
     for(i in seq(length(id.list))){
       id.list[[i]] <- id.list[[i]][
@@ -102,5 +107,5 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
 
   cat('Done.\n')
 
-  list(UNID = unid, ID_flag = flag.id)
+  unid
 }

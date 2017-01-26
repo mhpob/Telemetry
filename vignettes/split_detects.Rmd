@@ -1,7 +1,7 @@
 ---
 title: "Splitting Your VEMCO Detections for Distribution to ACT"
 author: "Mike O'Brien <obrien@umces.edu>"
-date: "2016-02-01"
+date: "2017-01-25"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Splitting Your VEMCO Detections for Distribution to ACT}
@@ -34,13 +34,7 @@ On this server, I have a folder which contains all detections, separated by arra
 
 ```{r}
 library(TelemetryR)
-vemsort('p:/obrien/detections')
-```
-
-I can also put in a vector of false detections that I've gotten confirmed by VEMCO. The function originally removed these detections, but I got nervous that a legitimate fish happening to share a tag that was false on one transmitter may show up on another. Now, this just inserts a `FALSE` flag so a manual decision can be made later. Note the addition of a "flag" column:
-
-```{r}
-vemsort('p:/obrien/detections', c('A69-1601-37119','A69-1601-64288'))
+vemsort('p:/obrien/biotelemetry/detections')
 ```
 
 If you want to go on and play with the detection data, you can pull out your own detections and stop here.
@@ -63,17 +57,16 @@ Done!
 If you don't want the *.csv* files to be written in your working directory, you can choose `write = F` or specify a different output folder in the `out` argument.
 
 ```{r, eval = F}
-ACTsplit(directory = 'p:/obrien/detections',
+ACTsplit(directory = 'p:/obrien/biotelemetry/detections',
          write = F, out = 'c:/users/secor lab/desktop')
 ```
 
-You can also provide false and personal detections and give a date range for which detections you want (make sure the date is in year-month-day format).
+You can also provide personal detections and give a date range for which detections you want (make sure the date is in year-month-day format).
 
 ```{r, eval = F}
 # Splits detections from June 1 up to and including August 1, 2014
-ACTsplit(directory = 'p:/obrien/detections',
+ACTsplit(directory = 'p:/obrien/biotelemetry/detections',
          my.trans = paste0('A69-1601-',seq(25434,25505)),
-         false.det = c('A69-1601-37119','A69-1601-64288'),
          start = 20140601, end = 20140801)
 ```
 
