@@ -12,8 +12,7 @@
 #' @param directory String. Location of CSV data, defaults to current wd.
 #' @return Output is a data.table containing all detections from
 #'    the directory's CSV files. Adds a column containing local time of the
-#'    detections (as defined by \code{Sys.timzone}) and a column containing
-#'    transmitter ID standards
+#'    detections (as defined by \code{Sys.timzone}).
 #' @export
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
@@ -48,9 +47,6 @@ vemsort <- function(directory = getwd()) {
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = Sys.timezone())
-  # pull out transmitter ID Standard
-  detects <- detects[, trans.num := sapply(strsplit(transmitter, '-'), '[[', 3)]
-  detects$trans.num <- as.numeric(detects$trans.num)
 
   cat('Done.\n')
 
