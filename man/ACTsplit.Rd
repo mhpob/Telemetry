@@ -22,10 +22,10 @@ only looking for unidentified detections.}
 \item{out}{String. Where do you want the CSV files placed?}
 
 \item{start}{Numeric. Date in ymd form from which you want to start pulling
-detections. Defaults to Jan 1, 2000.}
+detections, assumed to be Eastern time zone. Defaults to Jan 1, 2000.}
 
-\item{end}{Numeric. Date in ymd form to stop pulling detections. Defaults to
-current system date.}
+\item{end}{Numeric. Date in ymd form to stop pulling detections, assumed to
+be Eastern time zone. Defaults to current system date.}
 }
 \value{
 Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
@@ -50,4 +50,3 @@ ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
 \seealso{
 \code{\link{vemsort}}, \code{\link{ACTupdate}}
 }
-
