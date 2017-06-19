@@ -16,9 +16,9 @@
 #'    only looking for unidentified detections.
 #' @param out String. Where do you want the CSV files placed?
 #' @param start Numeric. Date in ymd form from which you want to start pulling
-#'    detections. Defaults to Jan 1, 2000.
-#' @param end Numeric. Date in ymd form to stop pulling detections. Defaults to
-#'    current system date.
+#'    detections, assumed to be Eastern time zone. Defaults to Jan 1, 2000.
+#' @param end Numeric. Date in ymd form to stop pulling detections, assumed to
+#'    be Eastern time zone. Defaults to current system date.
 #' @return Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
 #'    will be found in your current working directory by default.

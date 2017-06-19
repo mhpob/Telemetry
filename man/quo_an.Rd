@@ -60,4 +60,3 @@ calculated using \code{boot.ci} from the \code{boot} package. The \code{type}
 input to \code{boot.ci} is "\code{perc}"; all other inputs to \code{boot} and
 \code{boot.ci} are the function defaults.
 }
-

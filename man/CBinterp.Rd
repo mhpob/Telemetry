@@ -40,4 +40,3 @@ interpolated <- CBinterp(data = fake.data, coordinates = coords,
 \seealso{
 \code{\link{chesapeake}}
 }
-

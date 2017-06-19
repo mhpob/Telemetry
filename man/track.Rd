@@ -27,4 +27,3 @@ they were visited.
 This function orders detection data by date/time and only returns detections
 where the fish moved from one identified location to another.
 }
-
