@@ -41,4 +41,3 @@ data(chesapeake)
 UTM shapefile of the Chesapeake Bay
 }
 \keyword{datasets}
-

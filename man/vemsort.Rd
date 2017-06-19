@@ -30,4 +30,3 @@ vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
          c('37119', '64288'))
 }
-

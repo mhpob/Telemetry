@@ -36,4 +36,3 @@ ptcirc(data.frame(lon = c(-76, -80), lat = c(34, 37)), 2000)
 \seealso{
 \code{\link{GEcircle}}
 }
-

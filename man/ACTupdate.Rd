@@ -40,4 +40,3 @@ ACTupdate(sheet = 'res')
 \seealso{
 \code{\link{vemsort}}, \code{\link{ACTsplit}}
 }
-

@@ -44,4 +44,3 @@ GEcircle(buoys[,1], buoys[,2], radius = 900, color = 'red', west = T)
 \seealso{
 \code{\link{ptcirc}}
 }
-

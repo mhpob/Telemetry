@@ -174,4 +174,3 @@ Manipulated into R fuction on 20150330 by M. O'Brien
 \author{
 Edwin Niklitschek \email{edwin.niklitschek@ulagos.cl}
 }
-
