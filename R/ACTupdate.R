@@ -32,8 +32,9 @@ ACTupdate <- function(sheet = 'active', local.ACT = NULL, keep = F){
                       local.ACT)
 
   rdrop2::drop_auth()
-  drop.ACT <- rdrop2::drop_search(sheet,
-              path = 'ACT Network/ACT Transmitters, Researchers, and Arrays/')
+  drop.ACT <- rdrop2::drop_dir(
+    '/act network/act transmitters, researchers, and arrays') %>%
+    dplyr::filter(grepl(sheet, name, ignore.case = T))
 
   ACT_version_check <- function(){
     local.ACT.check <- list.files(getwd(), recursive = T,
@@ -41,8 +42,8 @@ ACTupdate <- function(sheet = 'active', local.ACT = NULL, keep = F){
 
     if(length(local.ACT.check) > 0){
       local.mtime <- file.info(local.ACT.check)$mtime
-      drop.mtime <- drop.ACT$client_mtime
-      drop.mtime <- lubridate::dmy_hms(strsplit(drop.mtime, ',|[+]')[[1]][2])
+      drop.mtime <- drop.ACT$client_modified
+      drop.mtime <- lubridate::ymd_hms(drop.mtime)
       drop.mtime > local.mtime
       }else{
         TRUE
@@ -50,36 +51,23 @@ ACTupdate <- function(sheet = 'active', local.ACT = NULL, keep = F){
   }
 
   if(ACT_version_check() == T){
-    drop.loc <- drop.ACT %>% dplyr::select(path) %>% as.character()
+    drop.loc <- drop.ACT %>% dplyr::select(path_lower) %>% as.character()
 
-    suppressMessages(rdrop2::drop_get(drop.loc, overwrite = T, progress = T))
+    rdrop2::drop_download(drop.loc, overwrite = T,
+                          progress = F, verbose = F)
     file <- strsplit(drop.loc, '/')[[1]][4]
 
-    # For some reason, read_excel() doesn't read the numeric columns as numeric,
-    # even when specifying explicitly. Read as text and convert to numeric later.
-    # Allow read_excel to convert dates, though.
-    classes <- switch(substr(file, 1, 3),
-                      Act = c(rep('text', 6), 'date', 'text', 'date',
-                              rep('text', 15)),
-                      All = c(rep('text', 6), 'date', 'text', 'date',
-                              rep('text', 16)),
-                      Arc = c(rep('text', 6), 'date', 'text', 'date',
-                              rep('text', 14)),
-                      Res = rep('text', 9),
-                      Unk = c(rep('text', 6), 'date', 'text', 'date',
-                              rep('text', 15)))
-
-    new.local.ACT <- readxl::read_excel(file, col_types = classes)
+    new.local.ACT <- suppressWarnings(readxl::read_excel(file))
 
     if(keep == F){
       file.remove(file)
     }
 
-    numeric.columns <- c('ID Standard', 'ID Sensor I',
-                         'ID Sensor II', 'Tag Life')
-    new.local.ACT[, names(new.local.ACT) %in% numeric.columns] <-
-      sapply(new.local.ACT[, names(new.local.ACT) %in% numeric.columns],
-             as.numeric)
+    # numeric.columns <- c('ID Standard', 'ID Sensor I',
+    #                      'ID Sensor II', 'Tag Life')
+    # new.local.ACT[, names(new.local.ACT) %in% numeric.columns] <-
+    #   sapply(new.local.ACT[, names(new.local.ACT) %in% numeric.columns],
+    #          as.numeric)
     names(new.local.ACT) <- gsub(' ', '.', names(new.local.ACT))
     new.local.ACT$Primary.Researcher <- gsub('/', '.',
                                              new.local.ACT$Primary.Researcher)
