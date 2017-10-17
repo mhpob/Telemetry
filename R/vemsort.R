@@ -26,9 +26,12 @@ vemsort <- function(directory = getwd()) {
 
   # Read in files and rename columns
   cat('Reading files...\n')
-  detect.list <- suppressWarnings(pbapply::pblapply(files,
-                                                    FUN = data.table::fread,
-                                                    stringsAsFactors = F))
+  detect.list <- suppressWarnings(
+    pbapply::pblapply(files,
+                      FUN = data.table::fread,
+                      sep = ",",
+                      stringsAsFactors = F,
+                      fill = T))
   cat('Done.\n')
 
   for (i in seq(1:length(detect.list))){
