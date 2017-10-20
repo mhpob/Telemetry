@@ -107,5 +107,5 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
 
   cat('Done.\n')
 
-  unid[, -'Primary Researcher']
+  unid[, names(unid) != 'Primary.Researcher']
 }
