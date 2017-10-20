@@ -38,6 +38,9 @@ vemsort <- function(directory = getwd()) {
     names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
                                  'trans.name', 'trans.serial', 'sensor.value',
                                  'sensor.unit', 'station', 'lat', 'long')
+    detect.list[[i]]$file <- grep('*.csv',
+                                  unlist(strsplit(files[i], '/')),
+                                  value = T)
   }
 
   # Make list into data frame
@@ -50,10 +53,11 @@ vemsort <- function(directory = getwd()) {
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = Sys.timezone())
-
-  cat('Done.\n')
-
+  detects <- detects[, c('date.utc', 'date.local', 'receiver', 'transmitter',
+                         'trans.name', 'trans.serial', 'sensor.value',
+                         'sensor.unit', 'station', 'lat', 'long', 'file')]
   row.names(detects) <- NULL
+  cat('Done.\n')
 
   detects
 }
