@@ -11,8 +11,9 @@ vemsort(directory = getwd())
 }
 \value{
 Output is a data.table containing all detections from
-   the directory's CSV files. Adds a column containing local time of the
-   detections (as defined by \code{Sys.timzone}).
+   the directory's CSV files. Adds two columns: one containing local time of
+   the detections (as defined by \code{Sys.timzone}) and one containing the
+   detection's CSV file of origin.
 }
 \description{
 \code{vemsort} finds and combines all VEMCO CSV files in a directory
