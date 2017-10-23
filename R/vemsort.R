@@ -57,6 +57,8 @@ vemsort <- function(directory = getwd()) {
   detects <- detects[, c('date.utc', 'date.local', 'receiver', 'transmitter',
                          'trans.name', 'trans.serial', 'sensor.value',
                          'sensor.unit', 'station', 'lat', 'long', 'file')]
+  detects <- detects[!duplicated(detects, by = c('date.utc', 'transmitter'),
+                           fromLast = T),]
   row.names(detects) <- NULL
   cat('Done.\n')
 
