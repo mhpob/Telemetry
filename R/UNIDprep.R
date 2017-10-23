@@ -1,7 +1,37 @@
-# library(TelemetryR)
-unids <- TelemetryR::ACTsplit('p:/obrien/biotelemetry/detections/cbl pier', 'p:/obrien/randomr/actactive.rda', write = F)
-out <- 'p:/obrien/biotelemetry/detections/cbl pier'
-directory <- 'p:/obrien/biotelemetry/detections/cbl pier'
+#' Assemble unidentified detections, VRL files, and VRL-RLD files for
+#' submission to VEMCO
+#'
+#' \code{UNIDprep} creates a new folder containing a CSV file of unknown
+#' transmitters along with the VRL and VRL-RLD files containing the
+#' original detections
+#'
+#' The function aims to easily provide the files requested by
+#' \href{http://www.vemco.com/}{VEMCO} to identify tag owners through its
+#' \href{https://vemco.com/customer-service/?cs-unknown-ids}{unknown ID service}.
+#' Transmitters that were not identified by the
+#' \href{http://www.theactnetwork.com/}{ACT Network} (via \code{\link{ACTsplit}})
+#' are listed in a CSV file and the directory is searched for corresponding
+#' VRL and VRL-RLD files. These, along with the tag list, are exported directly
+#' into a new folder on your computer.
+#'
+#' @param unids Data frame. Output of \code{\link{ACTsplit}} containing unknown
+#' transmitters.
+#' @param directory String. Location of files that contain the unidentified
+#' detections. Most likely the same argument passed to \code{\link{ACTsplit}} or
+#' \code{\link{vemsort}}. Defaults to the working directory.
+#' @param out String. Where do you want the new folder to be placed? Defaults to
+#' the working directory.
+#' @return Output is a logical vector indicating whether VRL/VRL-RLD files were
+#' successfully found and copied (there are issues if they're not all
+#' \code{TRUE}), as well as a folder in the designated location called "Unknown
+#' for VEMCO" containing:
+#' - A CSV file containing the unknown IDs ('unknown_ids.csv')
+#' - VRL files containing the unknown detections
+#' - VRL-RLD files containing the unknown detections
+#'
+#' @seealso \code{\link{vemsort}}, \code{\link{ACTsplit}}
+#' @export
+
 UNIDprep <- function(unids, directory = getwd(), out = getwd()){
   Unks <- data.frame(Transmitters = unique(unids$transmitter))
 
@@ -30,5 +60,4 @@ UNIDprep <- function(unids, directory = getwd(), out = getwd()){
 
   file.copy(from = vrl_locs,
             to = file.path(output_location, vrl_all))
-
 }
