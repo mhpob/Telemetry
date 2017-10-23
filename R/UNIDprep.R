@@ -38,6 +38,9 @@
 #'      out = 'C:/Users/mypcname/Desktop')
 
 UNIDprep <- function(unids, directory = getwd(), out = getwd()){
+  output_location <- file.path(out, 'Unknown for VEMCO')
+  dir.create(output_location)
+
   Unks <- data.frame(Transmitters = unique(unids$transmitter))
 
   # List VRL and VRL-RLD files
@@ -58,8 +61,6 @@ UNIDprep <- function(unids, directory = getwd(), out = getwd()){
     )
 
   # Output UNID list, copy VRL and VRL-RLDs into new folder.
-  output_location <- file.path(out, 'Unknown for VEMCO')
-  dir.create(output_location)
   write.csv(Unks, file.path(output_location, 'unknown_ids.csv'),
             row.names = F)
 
