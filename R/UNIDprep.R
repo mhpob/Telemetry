@@ -71,6 +71,6 @@ UNIDprep <- function(unids, directory = getwd(), out = getwd()){
 
   cat('Copying VRL files...\n')
   file.copy(from = vrl_locs,
-            to = file.path(output_location, vrl_all))
+            to = file.path(output_location, basename(vrl_locs)))
   cat('Done.\n')
 }
