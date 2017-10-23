@@ -55,15 +55,22 @@ UNIDprep <- function(unids, directory = getwd(), out = getwd()){
   vrl_all <- c(vrls, vrl_rlds)
 
   # Find location of files within directory
-  vrl_locs <- unlist(
-    lapply(vrl_all, function(x) list.files(path = directory, pattern = x,
-                                           recursive = T, full.names = T))
-    )
+  cat('Searching for VRL files...\n')
+  vrl_locs <-
+    pbapply::pblapply(vrl_all,
+                      function(x) list.files(path = directory,
+                                             pattern = x,
+                                             recursive = T,
+                                             full.names = T))
+  vrl_locs <- unlist(vrl_locs)
+  cat('Done.\n')
 
   # Output UNID list, copy VRL and VRL-RLDs into new folder.
   write.csv(Unks, file.path(output_location, 'unknown_ids.csv'),
             row.names = F)
 
+  cat('Copying VRL files...\n')
   file.copy(from = vrl_locs,
             to = file.path(output_location, vrl_all))
+  cat('Done.\n')
 }
