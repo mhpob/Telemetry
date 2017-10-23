@@ -1,36 +1,41 @@
-#' Assemble unidentified detections, VRL files, and VRL-RLD files for
-#' submission to VEMCO
+#' Assemble unidentified detections, VRL files, and VRL-RLD files for submission
+#' to VEMCO
 #'
 #' \code{UNIDprep} creates a new folder containing a CSV file of unknown
-#' transmitters along with the VRL and VRL-RLD files containing the
-#' original detections
+#' transmitters along with the VRL and VRL-RLD files containing the original
+#' detections
 #'
 #' The function aims to easily provide the files requested by
 #' \href{http://www.vemco.com/}{VEMCO} to identify tag owners through its
-#' \href{https://vemco.com/customer-service/?cs-unknown-ids}{unknown ID service}.
-#' Transmitters that were not identified by the
-#' \href{http://www.theactnetwork.com/}{ACT Network} (via \code{\link{ACTsplit}})
-#' are listed in a CSV file and the directory is searched for corresponding
-#' VRL and VRL-RLD files. These, along with the tag list, are exported directly
-#' into a new folder on your computer.
+#' \href{https://vemco.com/customer-service/?cs-unknown-ids}{unknown ID
+#' service}. Transmitters that were not identified by the
+#' \href{http://www.theactnetwork.com/}{ACT Network} (via
+#' \code{\link{ACTsplit}}) are listed in a CSV file and the directory is
+#' searched for corresponding VRL and VRL-RLD files. These, along with the tag
+#' list, are exported directly into a new folder on your computer.
 #'
 #' @param unids Data frame. Output of \code{\link{ACTsplit}} containing unknown
-#' transmitters.
+#'   transmitters.
 #' @param directory String. Location of files that contain the unidentified
-#' detections. Most likely the same argument passed to \code{\link{ACTsplit}} or
-#' \code{\link{vemsort}}. Defaults to the working directory.
+#'   detections--most likely the same argument passed to \code{\link{ACTsplit}}
+#'   or \code{\link{vemsort}}. Defaults to the working directory.
 #' @param out String. Where do you want the new folder to be placed? Defaults to
-#' the working directory.
+#'   the working directory.
 #' @return Output is a logical vector indicating whether VRL/VRL-RLD files were
-#' successfully found and copied (there are issues if they're not all
-#' \code{TRUE}), as well as a folder in the designated location called "Unknown
-#' for VEMCO" containing:
-#' - A CSV file containing the unknown IDs ('unknown_ids.csv')
-#' - VRL files containing the unknown detections
-#' - VRL-RLD files containing the unknown detections
+#'   successfully found and copied (there are issues if they're not all
+#'   \code{TRUE}), as well as a folder in the designated location called
+#'   "Unknown for VEMCO" containing: \itemize{ \item A CSV file containing the
+#'   unknown IDs ('unknown_ids.csv') \item VRL files containing the unknown
+#'   detections and \item VRL-RLD files containing the unknown detections }
 #'
 #' @seealso \code{\link{vemsort}}, \code{\link{ACTsplit}}
 #' @export
+#' @examples
+#' unknown <- ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
+#'      write = F)
+#' UNIDprep(unids = unknown,
+#'      directory = 'C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
+#'      out = 'C:/Users/mypcname/Desktop')
 
 UNIDprep <- function(unids, directory = getwd(), out = getwd()){
   Unks <- data.frame(Transmitters = unique(unids$transmitter))
