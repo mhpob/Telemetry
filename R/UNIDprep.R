@@ -39,7 +39,9 @@
 
 UNIDprep <- function(unids, directory = getwd(), out = getwd()){
   output_location <- file.path(out, 'Unknown for VEMCO')
-  dir.create(output_location)
+  if(!dir.exists(output_location)){
+    dir.create(output_location)
+  }
 
   Unks <- data.frame(Transmitters = unique(unids$transmitter))
 
