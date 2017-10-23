@@ -1,7 +1,7 @@
 #' Assemble unidentified detections, VRL files, and VRL-RLD files for submission
 #' to VEMCO
 #'
-#' \code{UNIDprep} creates a new folder containing a CSV file of unknown
+#' \code{UNIDprep} populates a folder with a CSV file of unknown
 #' transmitters along with the VRL and VRL-RLD files containing the original
 #' detections
 #'

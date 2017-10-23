@@ -27,7 +27,7 @@ Output is a logical vector indicating whether VRL/VRL-RLD files were
   detections and \item VRL-RLD files containing the unknown detections }
 }
 \description{
-\code{UNIDprep} creates a new folder containing a CSV file of unknown
+\code{UNIDprep} populates a folder with a CSV file of unknown
 transmitters along with the VRL and VRL-RLD files containing the original
 detections
 }
