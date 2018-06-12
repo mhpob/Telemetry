@@ -42,16 +42,13 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
     }
 
   # Filter for date range
-  stdate <- lubridate::ymd(start, tz = 'America/New_York')
-  enddate <- lubridate::ymd(end, tz = 'America/New_York')
-
   detects <- dplyr::filter(detects,
-                           date.local >= stdate &
-                           date.local <= enddate)
+                           date.local >= start &
+                           date.local <= end)
 
   ACTtrans <- get(load(ACTtrans))
 
-  cat('Splitting...\n')
+  cat('Finding researcher...\n')
 
   id <- merge(detects, ACTtrans[, names(ACTtrans) %in%
                           c('Tag.ID.Code.Standard', 'Primary.Researcher')],
@@ -79,34 +76,40 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                           is.na(Primary.Researcher))
 
 
-  id.list <- split(data.frame(id), id$Primary.Researcher)
-
-  csv.root <- ifelse(!is.null(out), out,
-                     ifelse(is.data.frame(directory),
-                            getwd(), directory))
-
   if(write == TRUE){
+    cat('Preparing to write...\n')
+    id <- dplyr::select(id,
+                        date.utc, receiver, transmitter, trans.name,
+                        trans.serial, sensor.value, sensor.unit, station,
+                        lat, long, Primary.Researcher) %>%
+      dplyr::arrange(transmitter, date.utc)
+
+    names(id) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
+                   'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
+                   'Sensor Unit', 'Station Name', 'Latitude', 'Longitude',
+                   'Primary.Researcher')
+
+    id.list <- split(data.table(id),
+                     by = 'Primary.Researcher',
+                     keep.by = F)
+
+    csv.root <- ifelse(!is.null(out), out,
+                       ifelse(is.data.frame(directory),
+                              getwd(), directory))
+
+
     cat('Writing files...\n')
     pb <- txtProgressBar(char = '+', width = 50, style = 3)
     for(i in seq(length(id.list))){
-      id.list[[i]] <- id.list[[i]][
-        c('date.utc','receiver', 'transmitter', 'trans.name', 'trans.serial',
-          'sensor.value', 'sensor.unit', 'station', 'lat', 'long')]
-      names(id.list[[i]]) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
-                    'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
-                    'Sensor Unit', 'Station Name', 'Latitude', 'Longitude')
-      id.list[[i]] <- id.list[[i]][order(id.list[[i]]['Transmitter'],
-                                         id.list[[i]]['Date and Time (UTC)']),]
-      write.csv(id.list[[i]], file = paste(csv.root,
-                                     paste0(gsub(' ', '', names(id.list[i])),
-                                            Sys.Date(),'.csv'), sep = '/'),
-                row.names = F)
+      data.table::fwrite(id.list[[i]],
+                         file = paste(csv.root,
+                                      paste0(gsub(' ', '', names(id.list[i])),
+                                             Sys.Date(),'.csv'), sep = '/'),
+                         dateTimeAs = 'write.csv')
       setTxtProgressBar(pb, i)
     }
     close(pb)
   }
-
-  cat('Done.\n')
 
   unid[, names(unid) != 'Primary.Researcher']
 }
