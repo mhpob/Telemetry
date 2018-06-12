@@ -13,7 +13,6 @@ Imports:
     dplyr,
     gdistance,
     geoR,
-    ggplot2,
     lubridate,
     raster,
     rdrop2,
