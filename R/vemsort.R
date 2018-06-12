@@ -10,6 +10,11 @@
 #' Latitude, Longitude.
 #'
 #' @param directory String. Location of CSV data, defaults to current wd.
+#' @param clust A cluster object created by \code{\link[parallel]{makeCluster}}.
+#'    If cluster is supplied, this will use \code{\link[parallel]{parLapply}} to
+#'    import the files. Defaults to NULL with no parallel evaluation.
+#' @param prog_bar Logical. Do you want a progress bar displayed? Will increase
+#'    evaluation time. Initiates \code{\link[pbapply]{pblapply}}.
 #' @return Output is a data.table containing all detections from
 #'    the directory's CSV files. Adds two columns: one containing local time of
 #'    the detections (as defined by \code{Sys.timzone}) and one containing the
