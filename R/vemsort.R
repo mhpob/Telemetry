@@ -15,6 +15,8 @@
 #'    import the files. Defaults to NULL with no parallel evaluation.
 #' @param prog_bar Logical. Do you want a progress bar displayed? Will increase
 #'    evaluation time. Initiates \code{\link[pbapply]{pblapply}}.
+#' @param creation_date Character date in a standard unambiguous format
+#'    (e.g., YYYY-MM-DD). Will select only files created after this date.
 #' @return Output is a data frame containing all detections from
 #'    the directory's CSV files. Adds two columns: one containing local time of
 #'    the detections (as defined by \code{Sys.timzone}) and one containing the
@@ -25,18 +27,28 @@
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 #'
-#' # With parallel computation
+#' # Select files created after Jan 1, 2015
+#' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
+#'          creation_date = '2015-01-01')
+#'
+#' # Use parallel computation and a progress bar
 #' cl <- parallel::makeCluster(parallel::detectCores() - 1)
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
 #'          clust = cl, prog_bar = T)
 #' parallel::stopCluster(cl)
 
-vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F) {
+vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F,
+                    creation_date = NULL) {
   cat('Reading files...\n')
 
   # List all files within the provided directory
   files <- list.files(path = directory, pattern = '*.csv', full.names = T,
                       recursive = T)
+
+  # Select files created after a given date, if provided
+  if(!is.null(creation_date)){
+    files <- files[file.info(files)$ctime > creation_date]
+  }
 
   # Read in files and name list elements for later indexing
   if(prog_bar == T){
