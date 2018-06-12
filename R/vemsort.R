@@ -20,36 +20,46 @@
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
 #'          c('37119', '64288'))
 
-vemsort <- function(directory = getwd()) {
+vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F) {
+  cat('Reading files...\n')
+
   # List all files within the provided directory
   files <- list.files(path = directory, pattern = '*.csv', full.names = T,
                       recursive = T)
 
-  # Read in files and rename columns
-  cat('Reading files...\n')
-  detect.list <- suppressWarnings(
-    pbapply::pblapply(files,
-                      FUN = data.table::fread,
-                      sep = ",",
-                      stringsAsFactors = F,
-                      fill = T))
-  cat('Done.\n')
-
-  for (i in seq(1:length(detect.list))){
-    names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
-                                 'trans.name', 'trans.serial', 'sensor.value',
-                                 'sensor.unit', 'station', 'lat', 'long')
-    detect.list[[i]]$file <- grep('*.csv',
-                                  unlist(strsplit(files[i], '/')),
-                                  value = T)
+  # Read in files and name list elements for later indexing
+  if(prog_bar == T){
+    detect.list <- pbapply::pblapply(cl = clust,
+                                     X = files,
+                                     FUN = data.table::fread,
+                                     sep = ",",
+                                     stringsAsFactors = F)
+  } else {
+    if(is.null(clust)){
+      detect.list <- lapply(X = files,
+                            FUN = data.table::fread,
+                            sep = ",",
+                            stringsAsFactors = F)
+    } else {
+      detect.list <- parallel::parLapply(cl = clust,
+                                         X = files,
+                                         fun = data.table::fread,
+                                         sep = ",",
+                                         stringsAsFactors = F)
+    }
   }
 
-  # Make list into data frame
+  names(detect.list) <- grep('*.csv',
+                             unlist(strsplit(files, '/')),
+                             value = T)
+
   cat('Binding files...\n')
-  detects <- do.call(rbind, detect.list)
-  cat('Done.\n')
+
+  # Make list into data frame
+  detects <- data.table::rbindlist(detect.list, fill = T, idcol = 'file')
 
   cat('Final data manipulation...\n')
+
   # Convert UTC to EST/EDT
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
@@ -61,7 +71,6 @@ vemsort <- function(directory = getwd()) {
                                                  'station'),
                            fromLast = T),]
   row.names(detects) <- NULL
-  cat('Done.\n')
 
   detects
 }
