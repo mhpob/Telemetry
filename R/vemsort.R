@@ -10,58 +10,89 @@
 #' Latitude, Longitude.
 #'
 #' @param directory String. Location of CSV data, defaults to current wd.
-#' @return Output is a data.table containing all detections from
+#' @param clust A cluster object created by \code{\link[parallel]{makeCluster}}.
+#'    If cluster is supplied, this will use \code{\link[parallel]{parLapply}} to
+#'    import the files. Defaults to NULL with no parallel evaluation.
+#' @param prog_bar Logical. Do you want a progress bar displayed? Will increase
+#'    evaluation time. Initiates \code{\link[pbapply]{pblapply}}.
+#' @return Output is a data frame containing all detections from
 #'    the directory's CSV files. Adds two columns: one containing local time of
 #'    the detections (as defined by \code{Sys.timzone}) and one containing the
 #'    detection's CSV file of origin.
+#' @seealso \code{\link[parallel]{makeCluster}}, \code{\link[parallel]{parLapply}},
+#'    \code{\link[pbapply]{pblapply}}
 #' @export
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
+#'
+#' # With parallel computation
+#' cl <- parallel::makeCluster(parallel::detectCores() - 1)
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
-#'          c('37119', '64288'))
+#'          clust = cl, prog_bar = T)
+#' parallel::stopCluster(cl)
 
-vemsort <- function(directory = getwd()) {
+vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F) {
+  cat('Reading files...\n')
+
   # List all files within the provided directory
   files <- list.files(path = directory, pattern = '*.csv', full.names = T,
                       recursive = T)
 
-  # Read in files and rename columns
-  cat('Reading files...\n')
-  detect.list <- suppressWarnings(
-    pbapply::pblapply(files,
-                      FUN = data.table::fread,
-                      sep = ",",
-                      stringsAsFactors = F,
-                      fill = T))
-  cat('Done.\n')
+  # Read in files and name list elements for later indexing
+  if(prog_bar == T){
+    if (!requireNamespace("pbapply", quietly = TRUE)) {
+      stop("Please install the \"pbapply\" package to use progress bars.",
+           call. = FALSE)
+    }
 
-  for (i in seq(1:length(detect.list))){
-    names(detect.list[[i]]) <- c('date.utc', 'receiver', 'transmitter',
-                                 'trans.name', 'trans.serial', 'sensor.value',
-                                 'sensor.unit', 'station', 'lat', 'long')
-    detect.list[[i]]$file <- grep('*.csv',
-                                  unlist(strsplit(files[i], '/')),
-                                  value = T)
+    detect.list <- pbapply::pblapply(cl = clust,
+                                     X = files,
+                                     FUN = data.table::fread,
+                                     sep = ",",
+                                     stringsAsFactors = F)
+  } else {
+    if(is.null(clust)){
+      detect.list <- lapply(X = files,
+                            FUN = data.table::fread,
+                            sep = ",",
+                            stringsAsFactors = F)
+    } else {
+      detect.list <- parallel::parLapply(cl = clust,
+                                         X = files,
+                                         fun = data.table::fread,
+                                         sep = ",",
+                                         stringsAsFactors = F)
+    }
   }
 
-  # Make list into data frame
+  names(detect.list) <- grep('*.csv',
+                             unlist(strsplit(files, '/')),
+                             value = T)
+
+
   cat('Binding files...\n')
-  detects <- do.call(rbind, detect.list)
-  cat('Done.\n')
+
+  # Make list into data frame
+  detects <- data.table::rbindlist(detect.list, fill = T, idcol = 'file')
+  names(detects) <- c('file', 'date.utc', 'receiver', 'transmitter',
+                      'trans.name', 'trans.serial', 'sensor.value',
+                      'sensor.unit', 'station', 'lat', 'long')
+
 
   cat('Final data manipulation...\n')
-  # Convert UTC to EST/EDT
+
+  # Convert UTC to computer's local time zone
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = Sys.timezone())
+
+  # Move columns around
   detects <- detects[, c('date.utc', 'date.local', 'receiver', 'transmitter',
                          'trans.name', 'trans.serial', 'sensor.value',
                          'sensor.unit', 'station', 'lat', 'long', 'file')]
-  detects <- detects[!duplicated(detects, by = c('date.utc', 'transmitter',
-                                                 'station'),
-                           fromLast = T),]
-  row.names(detects) <- NULL
-  cat('Done.\n')
 
-  detects
+  # Select unique detections
+  detects <- unique(detects, by = c('date.utc', 'transmitter', 'station'))
+
+  as.data.frame(detects)
 }
