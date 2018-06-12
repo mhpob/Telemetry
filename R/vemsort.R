@@ -40,6 +40,11 @@ vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F) {
 
   # Read in files and name list elements for later indexing
   if(prog_bar == T){
+    if (!requireNamespace("pbapply", quietly = TRUE)) {
+      stop("Please install the \"pbapply\" package to use progress bars.",
+           call. = FALSE)
+    }
+
     detect.list <- pbapply::pblapply(cl = clust,
                                      X = files,
                                      FUN = data.table::fread,
