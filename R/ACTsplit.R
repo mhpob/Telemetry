@@ -89,7 +89,7 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                    'Sensor Unit', 'Station Name', 'Latitude', 'Longitude',
                    'Primary.Researcher')
 
-    id.list <- split(data.table(id),
+    id.list <- split(data.table::data.table(id),
                      by = 'Primary.Researcher',
                      keep.by = F)
 
