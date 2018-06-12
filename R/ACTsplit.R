@@ -19,6 +19,7 @@
 #'    detections, assumed to be Eastern time zone. Defaults to Jan 1, 2000.
 #' @param end Numeric. Date in ymd form to stop pulling detections, assumed to
 #'    be Eastern time zone. Defaults to current system date.
+#' @param ... Optional arguments to \code{\link{vemsort}} (parallel? progress bar?)
 #' @return Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
 #'    data frame containing detections of unidentified codes. The CSV files
 #'    will be found in your current working directory by default.
@@ -32,12 +33,12 @@
 
 ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                      write = TRUE, out = NULL,
-                     start = 20040101, end = Sys.Date()){
+                     start = 20040101, end = Sys.Date(), ...){
 
   detects <- if(is.data.frame(directory)){
     directory
     } else{
-      vemsort(directory)
+      vemsort(directory, ...)
     }
 
   # Filter for date range
