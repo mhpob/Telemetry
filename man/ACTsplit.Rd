@@ -5,7 +5,7 @@
 \title{Split detections into CSV files according to ACT database}
 \usage{
 ACTsplit(directory = getwd(), ACTtrans, my.trans = NULL, write = TRUE,
-  out = NULL, start = 20040101, end = Sys.Date())
+  out = NULL, start = 20040101, end = Sys.Date(), ...)
 }
 \arguments{
 \item{directory}{String passed on to \code{\link{vemsort}}. Location of CSV
@@ -26,6 +26,8 @@ detections, assumed to be Eastern time zone. Defaults to Jan 1, 2000.}
 
 \item{end}{Numeric. Date in ymd form to stop pulling detections, assumed to
 be Eastern time zone. Defaults to current system date.}
+
+\item{...}{Optional arguments to \code{\link{vemsort}} (parallel? progress bar?)}
 }
 \value{
 Outputs are CSV files in the form of ResearcherCurrentdate.csv and a

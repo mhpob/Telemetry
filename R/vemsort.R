@@ -15,15 +15,21 @@
 #'    import the files. Defaults to NULL with no parallel evaluation.
 #' @param prog_bar Logical. Do you want a progress bar displayed? Will increase
 #'    evaluation time. Initiates \code{\link[pbapply]{pblapply}}.
-#' @return Output is a data.table containing all detections from
+#' @return Output is a data frame containing all detections from
 #'    the directory's CSV files. Adds two columns: one containing local time of
 #'    the detections (as defined by \code{Sys.timzone}) and one containing the
 #'    detection's CSV file of origin.
+#' @seealso \code{\link[parallel]{makeCluster}}, \code{\link[parallel]{parLapply}},
+#'    \code{\link[pbapply]{pblapply}}
 #' @export
 #' @examples
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
+#'
+#' # With parallel computation
+#' cl <- parallel::makeCluster(parallel::detectCores() - 1)
 #' vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
-#'          c('37119', '64288'))
+#'          clust = cl, prog_bar = T)
+#' parallel::stopCluster(cl)
 
 vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F) {
   cat('Reading files...\n')

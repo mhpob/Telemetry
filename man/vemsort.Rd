@@ -4,13 +4,20 @@
 \alias{vemsort}
 \title{Prepare VEMCO transmitter CSV files for analysis}
 \usage{
-vemsort(directory = getwd())
+vemsort(directory = getwd(), clust = NULL, prog_bar = F)
 }
 \arguments{
 \item{directory}{String. Location of CSV data, defaults to current wd.}
+
+\item{clust}{A cluster object created by \code{\link[parallel]{makeCluster}}.
+If cluster is supplied, this will use \code{\link[parallel]{parLapply}} to
+import the files. Defaults to NULL with no parallel evaluation.}
+
+\item{prog_bar}{Logical. Do you want a progress bar displayed? Will increase
+evaluation time. Initiates \code{\link[pbapply]{pblapply}}.}
 }
 \value{
-Output is a data.table containing all detections from
+Output is a data frame containing all detections from
    the directory's CSV files. Adds two columns: one containing local time of
    the detections (as defined by \code{Sys.timzone}) and one containing the
    detection's CSV file of origin.
@@ -28,6 +35,14 @@ Latitude, Longitude.
 }
 \examples{
 vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
+
+# With parallel computation
+cl <- parallel::makeCluster(parallel::detectCores() - 1)
 vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
-         c('37119', '64288'))
+         clust = cl, prog_bar = T)
+parallel::stopCluster(cl)
+}
+\seealso{
+\code{\link[parallel]{makeCluster}}, \code{\link[parallel]{parLapply}},
+   \code{\link[pbapply]{pblapply}}
 }
