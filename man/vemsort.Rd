@@ -4,7 +4,8 @@
 \alias{vemsort}
 \title{Prepare VEMCO transmitter CSV files for analysis}
 \usage{
-vemsort(directory = getwd(), clust = NULL, prog_bar = F)
+vemsort(directory = getwd(), clust = NULL, prog_bar = F,
+  creation_date = NULL)
 }
 \arguments{
 \item{directory}{String. Location of CSV data, defaults to current wd.}
@@ -15,6 +16,9 @@ import the files. Defaults to NULL with no parallel evaluation.}
 
 \item{prog_bar}{Logical. Do you want a progress bar displayed? Will increase
 evaluation time. Initiates \code{\link[pbapply]{pblapply}}.}
+
+\item{creation_date}{Character date in a standard unambiguous format
+(e.g., YYYY-MM-DD). Will select only files created after this date.}
 }
 \value{
 Output is a data frame containing all detections from
@@ -36,7 +40,11 @@ Latitude, Longitude.
 \examples{
 vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 
-# With parallel computation
+# Select files created after Jan 1, 2015
+vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
+         creation_date = '2015-01-01')
+
+# Use parallel computation and a progress bar
 cl <- parallel::makeCluster(parallel::detectCores() - 1)
 vemsort('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs',
          clust = cl, prog_bar = T)
