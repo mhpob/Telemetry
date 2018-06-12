@@ -53,24 +53,30 @@ vemsort <- function(directory = getwd(), clust = NULL, prog_bar = F) {
                              unlist(strsplit(files, '/')),
                              value = T)
 
+
   cat('Binding files...\n')
 
   # Make list into data frame
   detects <- data.table::rbindlist(detect.list, fill = T, idcol = 'file')
+  names(detects) <- c('file', 'date.utc', 'receiver', 'transmitter',
+                      'trans.name', 'trans.serial', 'sensor.value',
+                      'sensor.unit', 'station', 'lat', 'long')
+
 
   cat('Final data manipulation...\n')
 
-  # Convert UTC to EST/EDT
+  # Convert UTC to computer's local time zone
   detects$date.utc <- lubridate::ymd_hms(detects$date.utc)
   detects$date.local <- lubridate::with_tz(detects$date.utc,
                                            tz = Sys.timezone())
+
+  # Move columns around
   detects <- detects[, c('date.utc', 'date.local', 'receiver', 'transmitter',
                          'trans.name', 'trans.serial', 'sensor.value',
                          'sensor.unit', 'station', 'lat', 'long', 'file')]
-  detects <- detects[!duplicated(detects, by = c('date.utc', 'transmitter',
-                                                 'station'),
-                           fromLast = T),]
-  row.names(detects) <- NULL
 
-  detects
+  # Select unique detections
+  detects <- unique(detects, by = c('date.utc', 'transmitter', 'station'))
+
+  as.data.frame(detects)
 }
