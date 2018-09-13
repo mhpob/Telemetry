@@ -15,9 +15,11 @@
 #' @param write Logical. Do you want to output CSV files? Useful if you are
 #'    only looking for unidentified detections.
 #' @param out String. Where do you want the CSV files placed?
-#' @param start Numeric. Date in ymd form from which you want to start pulling
+#' @param start Character date in a standard unambiguous format
+#'    (e.g., YYYY-MM-DD) from which you want to start pulling
 #'    detections, assumed to be Eastern time zone. Defaults to Jan 1, 2000.
-#' @param end Numeric. Date in ymd form to stop pulling detections, assumed to
+#' @param end Character date in a standard unambiguous format
+#'    (e.g., YYYY-MM-DD) to stop pulling detections, assumed to
 #'    be Eastern time zone. Defaults to current system date.
 #' @param ... Optional arguments to \code{\link{vemsort}} (parallel? progress bar?)
 #' @return Outputs are CSV files in the form of ResearcherCurrentdate.csv and a
@@ -29,17 +31,19 @@
 #' ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 #' # Choose detections from April 1, 2014 up to and including August 1, 2014.
 #' ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
-#'            start = 20140401, end = 20140801)
+#'            start = '2014-04-01', end = '2014-08-01')
 
 ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
                      write = TRUE, out = NULL,
-                     start = 20040101, end = Sys.Date(), ...){
+                     start = '2000-01-01', end = Sys.Date(), ...){
 
   detects <- if(is.data.frame(directory)){
     directory
     } else{
       vemsort(directory, ...)
     }
+
+  cat('Starting to split...\n')
 
   # Filter for date range
   detects <- dplyr::filter(detects,

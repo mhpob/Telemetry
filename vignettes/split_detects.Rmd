@@ -66,8 +66,8 @@ You can also provide personal detections and give a date range for which detecti
 ```{r, eval = F}
 # Splits detections from June 1 up to and including August 1, 2014
 ACTsplit(directory = 'p:/obrien/biotelemetry/detections',
-         my.trans = paste0('A69-1601-',seq(25434,25505)),
-         start = 20140601, end = 20140801)
+         my.trans = paste0('A69-1601-', seq(25434, 25505, 1)),
+         start = '2014-06-01', end = '2014-08-01')
 ```
 
 Good luck, and contact me with any questions!

@@ -4,8 +4,9 @@
 \alias{ACTsplit}
 \title{Split detections into CSV files according to ACT database}
 \usage{
-ACTsplit(directory = getwd(), ACTtrans, my.trans = NULL, write = TRUE,
-  out = NULL, start = 20040101, end = Sys.Date(), ...)
+ACTsplit(directory = getwd(), ACTtrans, my.trans = NULL,
+  write = TRUE, out = NULL, start = "2000-01-01", end = Sys.Date(),
+  ...)
 }
 \arguments{
 \item{directory}{String passed on to \code{\link{vemsort}}. Location of CSV
@@ -21,10 +22,12 @@ only looking for unidentified detections.}
 
 \item{out}{String. Where do you want the CSV files placed?}
 
-\item{start}{Numeric. Date in ymd form from which you want to start pulling
+\item{start}{Character date in a standard unambiguous format
+(e.g., YYYY-MM-DD) from which you want to start pulling
 detections, assumed to be Eastern time zone. Defaults to Jan 1, 2000.}
 
-\item{end}{Numeric. Date in ymd form to stop pulling detections, assumed to
+\item{end}{Character date in a standard unambiguous format
+(e.g., YYYY-MM-DD) to stop pulling detections, assumed to
 be Eastern time zone. Defaults to current system date.}
 
 \item{...}{Optional arguments to \code{\link{vemsort}} (parallel? progress bar?)}
@@ -47,7 +50,7 @@ specified date range and removal of personal or private transmitters.
 ACTsplit('C:/Users/mypcname/Documents/Vemco/Vue/ReceiverLogs')
 # Choose detections from April 1, 2014 up to and including August 1, 2014.
 ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
-           start = 20140401, end = 20140801)
+           start = '2014-04-01', end = '2014-08-01')
 }
 \seealso{
 \code{\link{vemsort}}, \code{\link{ACTupdate}}

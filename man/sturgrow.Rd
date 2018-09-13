@@ -9,10 +9,10 @@ sturgrow(TEMP, SAL, DO, GR = 14, TL = NULL, CJ_OBS = 0, RATION = 1,
   hrm = 0.268, irm = 0.352, smin = 9.166, do1 = 25, grm = 0.748,
   crm = 1, drm = 1.048, arm = 0.522, brm = -0.17, ox = 13.55,
   tl98fc = 26.09, tk1fc = 0.195, tk4fc = 0.556, jfc = 0.359,
-  kfc = 0.247, s1 = 1, s4 = 29, gfc = 0.733, dfc = 2.516, cfc = 1,
-  afc = 1.028, bfc = -0.197, aeg = 0.335, ceg = -0.75, deg = -0.62,
-  geg = 0, aex = 0.055703, bex = -0.29, cex = 0.0392, asda = 0.1657,
-  aact = 0.29)
+  kfc = 0.247, s1 = 1, s4 = 29, gfc = 0.733, dfc = 2.516,
+  cfc = 1, afc = 1.028, bfc = -0.197, aeg = 0.335, ceg = -0.75,
+  deg = -0.62, geg = 0, aex = 0.055703, bex = -0.29,
+  cex = 0.0392, asda = 0.1657, aact = 0.29)
 }
 \arguments{
 \item{TEMP}{Numeric vector. Recorded temperature (celsius).}
