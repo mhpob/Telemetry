@@ -2,7 +2,24 @@ TelemetryR
 =========
 Aggregate, separate, and disperse detections.
 
+## September 13, 2018
+## Does `ACTsplit` not work? Change how your input dates are written.
+An update to `dplyr` broke the ability to select by dates. Whereas you used to be able to use a number to filter by date:
+
+```
+ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
+         start = 20140401, end = 20140801)
+```
+
+You now need to use character dates in a standard unambigious format: "yyyy-mm-dd".
+
+```
+ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
+         start = '2014-04-01', end = '2014-08-01')
+```
+
 ## June 12, 2018
+## TelemetryR Update: Now with more speed!
 Hi, All-
 I pushed an update which allows the use of [parallel computing](http://gforge.se/2015/02/how-to-go-parallel-in-r-basics-tips/) when importing VUE csv files, a speed up when splitting detections to send out to ACT, and a more lightweight package.
 
@@ -74,5 +91,3 @@ TelemetryR::ACTsplit('p:/obrien/biotelemetry/detections',
 The dependencies on `ggplot2` and `pbapply` have been removed, meaning that installing/updating the package should be quicker. That being said, you will have to have to install the `pbapply` package if you want to see a progress bar.
 
 I hope you find this useful! As always, please feel free to contact me with any questions.
-
-Mike
