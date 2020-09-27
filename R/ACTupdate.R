@@ -33,8 +33,8 @@ ACTupdate <- function(sheet = 'active', local.ACT = NULL, keep = F){
 
   rdrop2::drop_auth()
   drop.ACT <- rdrop2::drop_dir(
-    '/act network/act transmitters, researchers, and arrays') %>%
-    dplyr::filter(grepl(sheet, name, ignore.case = T))
+    '/act network/act transmitters, researchers, and arrays')
+  drop.ACT <- drop.ACT[grepl(sheet, drop.ACT$name, ignore.case = T),]
 
   ACT_version_check <- function(){
     local.ACT.check <- list.files(getwd(), recursive = T,
@@ -51,7 +51,7 @@ ACTupdate <- function(sheet = 'active', local.ACT = NULL, keep = F){
   }
 
   if(ACT_version_check() == T){
-    drop.loc <- drop.ACT %>% dplyr::select(path_lower) %>% as.character()
+    drop.loc <- as.character(drop.ACT$path_lower)
 
     rdrop2::drop_download(drop.loc, overwrite = T,
                           progress = F, verbose = F)
