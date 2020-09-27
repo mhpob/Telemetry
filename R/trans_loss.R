@@ -30,10 +30,10 @@ trans_loss <- function(data, dates, group, stdate = NULL, enddate = NULL){
                                      unit = 'day')
   }
 
-  data <- data %>%
-    dplyr::group_by_(group) %>%
-    dplyr::summarize_(last.record = lazyeval::interp(~max(x),
-                                                     x = as.name(dates)))
+  data <- data.table::setDT(data)[, last.record = lazyeval::interp(~max(x),
+                                                                   x = as.name(dates)),
+                                  by = group]
+
 
   data$interval <- lubridate::interval(stdate, data$last.record)
 
