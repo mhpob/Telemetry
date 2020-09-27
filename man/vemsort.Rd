@@ -4,8 +4,7 @@
 \alias{vemsort}
 \title{Prepare VEMCO transmitter CSV files for analysis}
 \usage{
-vemsort(directory = getwd(), clust = NULL, prog_bar = F,
-  creation_date = NULL)
+vemsort(directory = getwd(), clust = NULL, prog_bar = F, creation_date = NULL)
 }
 \arguments{
 \item{directory}{String. Location of CSV data, defaults to current wd.}

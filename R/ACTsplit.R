@@ -10,8 +10,6 @@
 #' @param directory String passed on to \code{\link{vemsort}}. Location of CSV
 #'    data, which defaults to current working directory.
 #' @param ACTtrans character. Location of ACT transmitter database.
-#' @param my.trans Numeric vector. Tag ID codes that you want removed prior
-#'    to distribution.
 #' @param write Logical. Do you want to output CSV files? Useful if you are
 #'    only looking for unidentified detections.
 #' @param out String. Where do you want the CSV files placed?
@@ -33,7 +31,7 @@
 #' ACTsplit('C:/Users/MYPCNAME/Documents/Vemco/Vue/ReceiverLogs',
 #'            start = '2014-04-01', end = '2014-08-01')
 
-ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
+ACTsplit <- function(directory = getwd(), ACTtrans,
                      write = TRUE, out = NULL,
                      start = '2000-01-01', end = Sys.Date(), ...){
 
@@ -46,56 +44,48 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
   cat('Starting to split...\n')
 
   # Filter for date range
-  detects <- dplyr::filter(detects,
+  detects <- data.table::setDT(detects)[,
                            date.local >= start &
-                           date.local <= end)
+                           date.local <= end]
 
-  ACTtrans <- get(load(ACTtrans))
+  ACTtrans <- data.table::setDT(get(load(ACTtrans)))
 
   cat('Finding researcher...\n')
 
-  id <- merge(detects, ACTtrans[, names(ACTtrans) %in%
-                          c('Tag.ID.Code.Standard', 'Primary.Researcher')],
-              by.x = c('transmitter'),
-              by.y = c('Tag.ID.Code.Standard'), all.x = T)
+  id <- ACTtrans[, c('Tag.ID.Code.Standard', 'Primary.Researcher')][
+    detects, on = c(Tag.ID.Code.Standard = 'transmitter')]
 
-  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
-                          c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')],
-              by.x = c('transmitter'),
-              by.y = c('Tag.ID.Code.Sensor.I'), all.x = T)
+  id <- ACTtrans[, c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')][
+    id, on = c(Tag.ID.Code.Sensor.I = 'Tag.ID.Code.Standard')]
 
-  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
-                          c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')],
-              by.x = c('transmitter'),
-              by.y = c('Tag.ID.Code.Sensor.II'), all.x = T)
-
-  id$Primary.Researcher <- paste0(id$Primary.Researcher,
-                                  id$Primary.Researcher.x,
-                                  id$Primary.Researcher.y)
-  id$Primary.Researcher <- gsub('NA', '', id$Primary.Researcher)
-  id <- id[, !names(id) %in% c('Primary.Researcher.x', 'Primary.Researcher.y')]
+  id <- ACTtrans[, c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')][
+    id, on = c(Tag.ID.Code.Sensor.II = 'Tag.ID.Code.Sensor.I')]
 
 
-  unid <- dplyr::filter(id, Primary.Researcher == ''|
-                          is.na(Primary.Researcher))
+  id[, Primary.Researcher := paste0(id$Primary.Researcher,
+                                    id$i.Primary.Researcher,
+                                    id$i.Primary.Researcher.1)]
+  id[, Primary.Researcher := gsub('NA', '', Primary.Researcher)]
+  id[, ':='(Primary.Researcher = ifelse(Primary.Researcher == '' | is.na(Primary.Researcher),
+                                        'UNID', Primary.Researcher),
+            i.Primary.Researcher = NULL,
+            i.Primary.Researcher.1 = NULL)]
+  data.table::setnames(id, 'Tag.ID.Code.Sensor.II', 'transmitter')
+
+
+  unid <- id[Primary.Researcher == 'UNID']
 
 
   if(write == TRUE){
     cat('Preparing to write...\n')
-    id <- dplyr::select(id,
-                        date.utc, receiver, transmitter, trans.name,
-                        trans.serial, sensor.value, sensor.unit, station,
-                        lat, long, Primary.Researcher) %>%
-      dplyr::arrange(transmitter, date.utc)
+    id <- id[, .(date.utc, receiver, transmitter, trans.name, trans.serial,
+                 sensor.value, sensor.unit, station, lat, long, Primary.Researcher)]
+    data.table::setorder(id, transmitter, date.utc)
 
     names(id) <- c('Date and Time (UTC)', 'Receiver', 'Transmitter',
                    'Transmitter Name', 'Transmitter Serial', 'Sensor Value',
                    'Sensor Unit', 'Station Name', 'Latitude', 'Longitude',
                    'Primary.Researcher')
-
-    id.list <- split(data.table::data.table(id),
-                     by = 'Primary.Researcher',
-                     keep.by = F)
 
     csv.root <- ifelse(!is.null(out), out,
                        ifelse(is.data.frame(directory),
@@ -103,17 +93,14 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
 
 
     cat('Writing files...\n')
-    pb <- txtProgressBar(char = '+', width = 50, style = 3)
-    for(i in seq(length(id.list))){
-      data.table::fwrite(id.list[[i]],
-                         file = paste(csv.root,
-                                      paste0(gsub(' ', '', names(id.list[i])),
-                                             Sys.Date(),'.csv'), sep = '/'),
-                         dateTimeAs = 'write.csv')
-      setTxtProgressBar(pb, i)
-    }
-    close(pb)
-  }
 
-  unid[, names(unid) != 'Primary.Researcher']
+    invisible(
+        id[, data.table::fwrite(.SD, file = paste(csv.root,
+                                    paste0(gsub(' ', '', Primary.Researcher),
+                                           Sys.Date(),'.csv'), sep = '/'),
+                  dateTimeAs = 'write.csv'),
+         by = .(Primary.Researcher)]
+      )
+  }
+  unid[, Primary.Researcher := NULL]
 }

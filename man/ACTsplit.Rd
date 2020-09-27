@@ -4,18 +4,21 @@
 \alias{ACTsplit}
 \title{Split detections into CSV files according to ACT database}
 \usage{
-ACTsplit(directory = getwd(), ACTtrans, my.trans = NULL,
-  write = TRUE, out = NULL, start = "2000-01-01", end = Sys.Date(),
-  ...)
+ACTsplit(
+  directory = getwd(),
+  ACTtrans,
+  write = TRUE,
+  out = NULL,
+  start = "2000-01-01",
+  end = Sys.Date(),
+  ...
+)
 }
 \arguments{
 \item{directory}{String passed on to \code{\link{vemsort}}. Location of CSV
 data, which defaults to current working directory.}
 
 \item{ACTtrans}{character. Location of ACT transmitter database.}
-
-\item{my.trans}{Numeric vector. Tag ID codes that you want removed prior
-to distribution.}
 
 \item{write}{Logical. Do you want to output CSV files? Useful if you are
 only looking for unidentified detections.}

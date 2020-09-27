@@ -2,6 +2,10 @@ TelemetryR
 =========
 Aggregate, separate, and disperse detections.
 
+## September 27, 2020
+Since I am using `data.table` as my import/export/joining workhorse, `dplyr` and `%>%` was made redundant. I've removed `dplyr` code and pipes to reduce the amount of imported packages.
+
+
 ## September 13, 2018
 ## Does `ACTsplit` not work? Change how your input dates are written.
 An update to `dplyr` broke the ability to select by dates. Whereas you used to be able to use a number to filter by date:

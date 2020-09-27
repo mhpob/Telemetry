@@ -4,7 +4,8 @@
 \name{chesapeake}
 \alias{chesapeake}
 \title{UTM shapefile of the Chesapeake Bay}
-\format{A large spatial polygons data frame
+\format{
+A large spatial polygons data frame
 \describe{
    \item{System}{System identifiers of ploygons. Factor with 15 levels:
        \itemize{
@@ -25,7 +26,8 @@
            \item York River
        }
    }
-}}
+}
+}
 \source{
 Shapefile used by the \href{http://ian.umces.edu}{Integration and
    Application Network} for the Chesapeake Bay Report Card. More information in:
