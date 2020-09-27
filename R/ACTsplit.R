@@ -46,38 +46,34 @@ ACTsplit <- function(directory = getwd(), ACTtrans, my.trans = NULL,
   cat('Starting to split...\n')
 
   # Filter for date range
-  detects <- dplyr::filter(detects,
+  detects <- data.table::setDT(detects)[,
                            date.local >= start &
-                           date.local <= end)
+                           date.local <= end]
 
-  ACTtrans <- get(load(ACTtrans))
+  ACTtrans <- data.table::setDT(get(load(ACTtrans)))
 
   cat('Finding researcher...\n')
 
-  id <- merge(detects, ACTtrans[, names(ACTtrans) %in%
-                          c('Tag.ID.Code.Standard', 'Primary.Researcher')],
-              by.x = c('transmitter'),
-              by.y = c('Tag.ID.Code.Standard'), all.x = T)
+  id <- ACTtrans[, c('Tag.ID.Code.Standard', 'Primary.Researcher')][
+    detects, on = c(Tag.ID.Code.Standard = 'transmitter')]
 
-  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
-                          c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')],
-              by.x = c('transmitter'),
-              by.y = c('Tag.ID.Code.Sensor.I'), all.x = T)
+  id <- ACTtrans[, c('Tag.ID.Code.Sensor.I', 'Primary.Researcher')][
+    id, on = c(Tag.ID.Code.Sensor.I = 'Tag.ID.Code.Standard')]
 
-  id <- merge(id, ACTtrans[, names(ACTtrans) %in%
-                          c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')],
-              by.x = c('transmitter'),
-              by.y = c('Tag.ID.Code.Sensor.II'), all.x = T)
-
-  id$Primary.Researcher <- paste0(id$Primary.Researcher,
-                                  id$Primary.Researcher.x,
-                                  id$Primary.Researcher.y)
-  id$Primary.Researcher <- gsub('NA', '', id$Primary.Researcher)
-  id <- id[, !names(id) %in% c('Primary.Researcher.x', 'Primary.Researcher.y')]
+  id <- ACTtrans[, c('Tag.ID.Code.Sensor.II', 'Primary.Researcher')][
+    id, on = c(Tag.ID.Code.Sensor.II = 'Tag.ID.Code.Sensor.I')]
 
 
-  unid <- dplyr::filter(id, Primary.Researcher == ''|
-                          is.na(Primary.Researcher))
+  id[, Primary.Researcher := paste0(id$Primary.Researcher,
+                                    id$i.Primary.Researcher,
+                                    id$i.Primary.Researcher.1)]
+  id[, Primary.Researcher := gsub('NA', '', Primary.Researcher)]
+  id[, ':='(i.Primary.Researcher = NULL,
+            i.Primary.Researcher.1 = NULL)]
+  data.table::setnames(id, 'Tag.ID.Code.Sensor.II', 'transmitter')
+
+
+  unid <- id[Primary.Researcher == '' | is.na(Primary.Researcher)]
 
 
   if(write == TRUE){
