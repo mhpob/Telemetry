@@ -3,8 +3,4 @@
 \docType{package}
 \name{TelemetryR}
 \alias{TelemetryR}
-\alias{TelemetryR-package}
 \title{TelemetryR.}
-\description{
-TelemetryR.
-}

@@ -3,7 +3,6 @@
 #' @name TelemetryR
 #' @docType package
 #'
-#' @importFrom dplyr "%>%"
 #' @importFrom data.table ":="
 NULL
 
